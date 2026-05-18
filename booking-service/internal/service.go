@@ -2,6 +2,7 @@ package internal
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"time"
 
@@ -25,7 +26,7 @@ func NewBookingService(db *pgxpool.Pool, redisClient *redis.Client, cfg Config) 
 }
 
 func (s *BookingService) CreateBooking(ctx context.Context, req CreateBookingRequest) (*Booking, error) {
-	available, err := s.IsSlotAvailable(ctx, req.ServiceID, req.SlotStart, req.SlotEnd)
+	available, err := s.CheckSlotAvailability(ctx, req.BookingDate, req.BookingSlot)
 	if err != nil {
 		return nil, err
 	}
@@ -34,192 +35,194 @@ func (s *BookingService) CreateBooking(ctx context.Context, req CreateBookingReq
 		return nil, errors.New("slot not available")
 	}
 
-	bookingID := uuid.New().String()
-
-	booking := &Booking{
-		ID:            bookingID,
-		CustomerID:    req.CustomerID,
-		ServiceID:     req.ServiceID,
-		SlotStart:     req.SlotStart,
-		SlotEnd:       req.SlotEnd,
-		PickupAddress: req.PickupAddress,
-		DropAddress:   req.DropAddress,
-		PickupTime:    req.PickupTime,
-		DropTime:      req.DropTime,
-		Status:        StatusCreated,
-	}
+	id := uuid.New().String()
+	var booking Booking
 
 	err = s.db.QueryRow(ctx,
-		`INSERT INTO bookings 
-		(id, customer_id, service_id, slot_start, slot_end, pickup_address, drop_address, pickup_time, drop_time, status, created_at, updated_at)
-		VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW())
-		RETURNING created_at, updated_at`,
-		booking.ID,
-		booking.CustomerID,
-		booking.ServiceID,
-		booking.SlotStart,
-		booking.SlotEnd,
-		booking.PickupAddress,
-		booking.DropAddress,
-		booking.PickupTime,
-		booking.DropTime,
-		booking.Status,
-	).Scan(&booking.CreatedAt, &booking.UpdatedAt)
+		`INSERT INTO bookings
+		(id, customer_id, vehicle_id, service_package_id, booking_date, booking_slot,
+		 pickup_required, pickup_address, status, created_at, updated_at)
+		 VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW(),NOW())
+		 RETURNING id, customer_id, vehicle_id, service_package_id, booking_date, booking_slot,
+		 pickup_required, pickup_address, status, created_at, updated_at`,
+		id,
+		req.CustomerID,
+		req.VehicleID,
+		req.ServicePackageID,
+		req.BookingDate,
+		req.BookingSlot,
+		req.PickupRequired,
+		req.PickupAddress,
+		BookingStatusCreated,
+	).Scan(
+		&booking.ID,
+		&booking.CustomerID,
+		&booking.VehicleID,
+		&booking.ServicePackageID,
+		&booking.BookingDate,
+		&booking.BookingSlot,
+		&booking.PickupRequired,
+		&booking.PickupAddress,
+		&booking.Status,
+		&booking.CreatedAt,
+		&booking.UpdatedAt,
+	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	_ = s.emitEvent(ctx, booking.ID, "BOOKING_CREATED", booking.Status)
+	_ = s.publishEvent(ctx, "BOOKING_CREATED", booking)
 
-	return booking, nil
+	return &booking, nil
 }
 
 func (s *BookingService) GetBooking(ctx context.Context, id string) (*Booking, error) {
-	var b Booking
+	var booking Booking
 
 	err := s.db.QueryRow(ctx,
-		`SELECT id, customer_id, service_id, slot_start, slot_end, pickup_address, drop_address, pickup_time, drop_time, status, created_at, updated_at
-		 FROM bookings WHERE id = $1`,
+		`SELECT id, customer_id, vehicle_id, service_package_id, booking_date, booking_slot,
+		        pickup_required, pickup_address, status, created_at, updated_at
+		 FROM bookings
+		 WHERE id = $1`,
 		id,
 	).Scan(
-		&b.ID,
-		&b.CustomerID,
-		&b.ServiceID,
-		&b.SlotStart,
-		&b.SlotEnd,
-		&b.PickupAddress,
-		&b.DropAddress,
-		&b.PickupTime,
-		&b.DropTime,
-		&b.Status,
-		&b.CreatedAt,
-		&b.UpdatedAt,
+		&booking.ID,
+		&booking.CustomerID,
+		&booking.VehicleID,
+		&booking.ServicePackageID,
+		&booking.BookingDate,
+		&booking.BookingSlot,
+		&booking.PickupRequired,
+		&booking.PickupAddress,
+		&booking.Status,
+		&booking.CreatedAt,
+		&booking.UpdatedAt,
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return &b, nil
+	return &booking, nil
 }
 
 func (s *BookingService) UpdateBooking(ctx context.Context, id string, req UpdateBookingRequest) (*Booking, error) {
-	available, err := s.IsSlotAvailableForUpdate(ctx, id, req.SlotStart, req.SlotEnd)
-	if err != nil {
-		return nil, err
+	if req.Status == "" {
+		req.Status = BookingStatusConfirmed
 	}
 
-	if !available {
-		return nil, errors.New("slot not available")
-	}
+	var booking Booking
 
-	var b Booking
-
-	err = s.db.QueryRow(ctx,
+	err := s.db.QueryRow(ctx,
 		`UPDATE bookings
-		 SET slot_start=$1, slot_end=$2, pickup_address=$3, drop_address=$4, pickup_time=$5, drop_time=$6, status=$7, updated_at=NOW()
-		 WHERE id=$8 AND status != 'CANCELLED'
-		 RETURNING id, customer_id, service_id, slot_start, slot_end, pickup_address, drop_address, pickup_time, drop_time, status, created_at, updated_at`,
-		req.SlotStart,
-		req.SlotEnd,
+		 SET booking_date=$1,
+		     booking_slot=$2,
+		     pickup_required=$3,
+		     pickup_address=$4,
+		     status=$5,
+		     updated_at=NOW()
+		 WHERE id=$6
+		   AND status != 'CANCELLED'
+		 RETURNING id, customer_id, vehicle_id, service_package_id, booking_date, booking_slot,
+		 pickup_required, pickup_address, status, created_at, updated_at`,
+		req.BookingDate,
+		req.BookingSlot,
+		req.PickupRequired,
 		req.PickupAddress,
-		req.DropAddress,
-		req.PickupTime,
-		req.DropTime,
-		StatusUpdated,
+		req.Status,
 		id,
 	).Scan(
-		&b.ID,
-		&b.CustomerID,
-		&b.ServiceID,
-		&b.SlotStart,
-		&b.SlotEnd,
-		&b.PickupAddress,
-		&b.DropAddress,
-		&b.PickupTime,
-		&b.DropTime,
-		&b.Status,
-		&b.CreatedAt,
-		&b.UpdatedAt,
+		&booking.ID,
+		&booking.CustomerID,
+		&booking.VehicleID,
+		&booking.ServicePackageID,
+		&booking.BookingDate,
+		&booking.BookingSlot,
+		&booking.PickupRequired,
+		&booking.PickupAddress,
+		&booking.Status,
+		&booking.CreatedAt,
+		&booking.UpdatedAt,
 	)
 
 	if err != nil {
 		return nil, err
 	}
 
-	_ = s.emitEvent(ctx, b.ID, "BOOKING_UPDATED", b.Status)
+	_ = s.publishEvent(ctx, "BOOKING_UPDATED", booking)
 
-	return &b, nil
+	return &booking, nil
 }
 
 func (s *BookingService) CancelBooking(ctx context.Context, id string) error {
-	_, err := s.db.Exec(ctx,
+	var booking Booking
+
+	err := s.db.QueryRow(ctx,
 		`UPDATE bookings
-		 SET status='CANCELLED', updated_at=NOW()
-		 WHERE id=$1 AND status != 'CANCELLED'`,
+		 SET status='CANCELLED',
+		     updated_at=NOW()
+		 WHERE id=$1
+		 RETURNING id, customer_id, vehicle_id, service_package_id, booking_date, booking_slot,
+		 pickup_required, pickup_address, status, created_at, updated_at`,
 		id,
+	).Scan(
+		&booking.ID,
+		&booking.CustomerID,
+		&booking.VehicleID,
+		&booking.ServicePackageID,
+		&booking.BookingDate,
+		&booking.BookingSlot,
+		&booking.PickupRequired,
+		&booking.PickupAddress,
+		&booking.Status,
+		&booking.CreatedAt,
+		&booking.UpdatedAt,
 	)
 
 	if err != nil {
 		return err
 	}
 
-	_ = s.emitEvent(ctx, id, "BOOKING_CANCELLED", StatusCancelled)
+	_ = s.publishEvent(ctx, "BOOKING_CANCELLED", booking)
 
 	return nil
 }
 
-func (s *BookingService) IsSlotAvailable(ctx context.Context, serviceID string, start, end time.Time) (bool, error) {
+func (s *BookingService) CheckSlotAvailability(ctx context.Context, date string, slot string) (bool, error) {
 	var count int
 
 	err := s.db.QueryRow(ctx,
-		`SELECT COUNT(1)
+		`SELECT COUNT(*)
 		 FROM bookings
-		 WHERE service_id = $1
-		   AND status != 'CANCELLED'
-		   AND slot_start < $3
-		   AND slot_end > $2`,
-		serviceID,
-		start,
-		end,
+		 WHERE booking_date = $1
+		   AND booking_slot = $2
+		   AND status != 'CANCELLED'`,
+		date,
+		slot,
 	).Scan(&count)
 
 	if err != nil {
 		return false, err
 	}
 
-	return count == 0, nil
+	maxCapacity := 5
+
+	return count < maxCapacity, nil
 }
 
-func (s *BookingService) IsSlotAvailableForUpdate(ctx context.Context, bookingID string, start, end time.Time) (bool, error) {
-	var count int
-
-	err := s.db.QueryRow(ctx,
-		`SELECT COUNT(1)
-		 FROM bookings
-		 WHERE id != $1
-		   AND status != 'CANCELLED'
-		   AND slot_start < $3
-		   AND slot_end > $2`,
-		bookingID,
-		start,
-		end,
-	).Scan(&count)
-
-	if err != nil {
-		return false, err
+func (s *BookingService) publishEvent(ctx context.Context, eventType string, booking Booking) error {
+	event := map[string]interface{}{
+		"event_type": eventType,
+		"source":     "booking-service",
+		"booking":    booking,
+		"timestamp":  time.Now(),
 	}
 
-	return count == 0, nil
-}
+	payload, err := json.Marshal(event)
+	if err != nil {
+		return err
+	}
 
-func (s *BookingService) emitEvent(ctx context.Context, bookingID, eventType string, status BookingStatus) error {
-	return PublishBookingEvent(ctx, s.redis, s.cfg.BookingEventQueue, BookingEvent{
-		EventID:   uuid.New().String(),
-		EventType: eventType,
-		BookingID: bookingID,
-		Status:    status,
-		CreatedAt: time.Now(),
-	})
+	return s.redis.Publish(ctx, s.cfg.BookingEventQueue, payload).Err()
 }

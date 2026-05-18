@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 	"time"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
@@ -21,9 +21,10 @@ func NewHandler(db *pgxpool.Pool, cfg Config) *Handler {
 	return &Handler{db: db, cfg: cfg}
 }
 
-func (h *Handler) Register(c fiber.Ctx) error {
+func (h *Handler) Register(c *fiber.Ctx) error {
 	var req RegisterRequest
-	if err := c.Bind().Body(&req); err != nil {
+
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "invalid request"})
 	}
 
@@ -45,7 +46,11 @@ func (h *Handler) Register(c fiber.Ctx) error {
 	_, err = h.db.Exec(context.Background(),
 		`INSERT INTO users (id, email, password_hash, role, status, created_at)
 		 VALUES ($1, $2, $3, $4, $5, NOW())`,
-		userID, req.Email, string(passwordHash), req.Role, "active",
+		userID,
+		req.Email,
+		string(passwordHash),
+		req.Role,
+		"active",
 	)
 
 	if err != nil {
@@ -58,9 +63,10 @@ func (h *Handler) Register(c fiber.Ctx) error {
 	})
 }
 
-func (h *Handler) Login(c fiber.Ctx) error {
+func (h *Handler) Login(c *fiber.Ctx) error {
 	var req LoginRequest
-	if err := c.Bind().Body(&req); err != nil {
+
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "invalid request"})
 	}
 
@@ -71,7 +77,14 @@ func (h *Handler) Login(c fiber.Ctx) error {
 		 FROM users
 		 WHERE email = $1`,
 		req.Email,
-	).Scan(&user.ID, &user.Email, &user.PasswordHash, &user.Role, &user.Status, &user.CreatedAt)
+	).Scan(
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.Role,
+		&user.Status,
+		&user.CreatedAt,
+	)
 
 	if err != nil {
 		return c.Status(401).JSON(fiber.Map{"error": "invalid credentials"})
@@ -101,7 +114,10 @@ func (h *Handler) Login(c fiber.Ctx) error {
 	_, err = h.db.Exec(context.Background(),
 		`INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at, revoked, created_at)
 		 VALUES ($1, $2, $3, $4, false, NOW())`,
-		uuid.New().String(), user.ID, refreshHash, expiresAt,
+		uuid.New().String(),
+		user.ID,
+		refreshHash,
+		expiresAt,
 	)
 
 	if err != nil {
@@ -115,9 +131,10 @@ func (h *Handler) Login(c fiber.Ctx) error {
 	})
 }
 
-func (h *Handler) RefreshToken(c fiber.Ctx) error {
+func (h *Handler) RefreshToken(c *fiber.Ctx) error {
 	var req RefreshRequest
-	if err := c.Bind().Body(&req); err != nil {
+
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "invalid request"})
 	}
 
@@ -134,7 +151,15 @@ func (h *Handler) RefreshToken(c fiber.Ctx) error {
 		   AND rt.revoked = false
 		   AND rt.expires_at > NOW()`,
 		refreshHash,
-	).Scan(&tokenID, &user.ID, &user.Email, &user.PasswordHash, &user.Role, &user.Status, &user.CreatedAt)
+	).Scan(
+		&tokenID,
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.Role,
+		&user.Status,
+		&user.CreatedAt,
+	)
 
 	if err != nil {
 		return c.Status(401).JSON(fiber.Map{"error": "invalid refresh token"})
@@ -161,7 +186,10 @@ func (h *Handler) RefreshToken(c fiber.Ctx) error {
 	_, err = h.db.Exec(context.Background(),
 		`INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at, revoked, created_at)
 		 VALUES ($1, $2, $3, $4, false, NOW())`,
-		uuid.New().String(), user.ID, newRefreshHash, expiresAt,
+		uuid.New().String(),
+		user.ID,
+		newRefreshHash,
+		expiresAt,
 	)
 
 	if err != nil {
@@ -175,7 +203,7 @@ func (h *Handler) RefreshToken(c fiber.Ctx) error {
 	})
 }
 
-func (h *Handler) Me(c fiber.Ctx) error {
+func (h *Handler) Me(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"user_id": c.Locals("user_id"),
 		"email":   c.Locals("email"),
@@ -183,15 +211,15 @@ func (h *Handler) Me(c fiber.Ctx) error {
 	})
 }
 
-func (h *Handler) AdminDashboard(c fiber.Ctx) error {
+func (h *Handler) AdminDashboard(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "admin dashboard"})
 }
 
-func (h *Handler) EmployeeDashboard(c fiber.Ctx) error {
+func (h *Handler) EmployeeDashboard(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "employee dashboard"})
 }
 
-func (h *Handler) CustomerDashboard(c fiber.Ctx) error {
+func (h *Handler) CustomerDashboard(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{"message": "customer dashboard"})
 }
 

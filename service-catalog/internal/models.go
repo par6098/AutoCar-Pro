@@ -2,82 +2,70 @@ package internal
 
 import "time"
 
-type Package struct {
-	ID          string     `json:"id"`
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	VehicleType string     `json:"vehicle_type"`
-	BasePrice   float64    `json:"base_price"`
-	Version     int        `json:"version"`
-	IsActive    bool       `json:"is_active"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   time.Time  `json:"updated_at"`
-	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
+type ServicePackage struct {
+	ID              string    `json:"id"`
+	Name            string    `json:"name"`
+	Description     string    `json:"description"`
+	VehicleType     string    `json:"vehicle_type"`
+	BasePrice       float64   `json:"base_price"`
+	DurationMinutes int       `json:"duration_minutes"`
+	Active          bool      `json:"active"`
+	CreatedAt       time.Time `json:"created_at"`
 }
 
 type Addon struct {
-	ID          string     `json:"id"`
-	Name        string     `json:"name"`
-	Description string     `json:"description"`
-	Price       float64    `json:"price"`
-	Version     int        `json:"version"`
-	IsActive    bool       `json:"is_active"`
-	CreatedAt   time.Time  `json:"created_at"`
-	UpdatedAt   time.Time  `json:"updated_at"`
-	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Price     float64   `json:"price"`
+	Active    bool      `json:"active"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type PricingRule struct {
-	ID              string     `json:"id"`
-	RuleType        string     `json:"rule_type"`
-	VehicleType     string     `json:"vehicle_type"`
-	PackageID       *string    `json:"package_id,omitempty"`
-	AddonID         *string    `json:"addon_id,omitempty"`
-	DiscountPercent float64    `json:"discount_percent"`
-	OverridePrice   *float64   `json:"override_price,omitempty"`
-	SeasonStart     *time.Time `json:"season_start,omitempty"`
-	SeasonEnd       *time.Time `json:"season_end,omitempty"`
-	IsActive        bool       `json:"is_active"`
-	CreatedAt       time.Time  `json:"created_at"`
-	UpdatedAt       time.Time  `json:"updated_at"`
-	DeletedAt       *time.Time `json:"deleted_at,omitempty"`
+	ID              string    `json:"id"`
+	VehicleType     string    `json:"vehicle_type"`
+	Season          string    `json:"season"`
+	PriceMultiplier float64   `json:"price_multiplier"`
+	CreatedAt       time.Time `json:"created_at"`
 }
 
 type CreatePackageRequest struct {
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	VehicleType string  `json:"vehicle_type"`
-	BasePrice   float64 `json:"base_price"`
+	Name            string  `json:"name"`
+	Description     string  `json:"description"`
+	VehicleType     string  `json:"vehicle_type"`
+	BasePrice       float64 `json:"base_price"`
+	DurationMinutes int     `json:"duration_minutes"`
+}
+
+type UpdatePackageRequest struct {
+	Name            string  `json:"name"`
+	Description     string  `json:"description"`
+	VehicleType     string  `json:"vehicle_type"`
+	BasePrice       float64 `json:"base_price"`
+	DurationMinutes int     `json:"duration_minutes"`
 }
 
 type CreateAddonRequest struct {
-	Name        string  `json:"name"`
-	Description string  `json:"description"`
-	Price       float64 `json:"price"`
+	Name  string  `json:"name"`
+	Price float64 `json:"price"`
 }
 
 type CreatePricingRuleRequest struct {
-	RuleType        string     `json:"rule_type"`
-	VehicleType     string     `json:"vehicle_type"`
-	PackageID       *string    `json:"package_id"`
-	AddonID         *string    `json:"addon_id"`
-	DiscountPercent float64    `json:"discount_percent"`
-	OverridePrice   *float64   `json:"override_price"`
-	SeasonStart     *time.Time `json:"season_start"`
-	SeasonEnd       *time.Time `json:"season_end"`
+	VehicleType     string  `json:"vehicle_type"`
+	Season          string  `json:"season"`
+	PriceMultiplier float64 `json:"price_multiplier"`
 }
 
 type CalculatePriceRequest struct {
 	PackageID   string   `json:"package_id"`
-	AddonIDs    []string `json:"addon_ids"`
 	VehicleType string   `json:"vehicle_type"`
-	BookingDate string   `json:"booking_date"`
+	Addons      []string `json:"addons"`
+	Season      string   `json:"season"`
 }
 
-type CalculatePriceResponse struct {
-	BasePrice        float64  `json:"base_price"`
-	AddonTotal       float64  `json:"addon_total"`
-	DiscountAmount   float64  `json:"discount_amount"`
-	SeasonalOverride *float64 `json:"seasonal_override,omitempty"`
-	FinalPrice       float64  `json:"final_price"`
+type PriceCalculationResponse struct {
+	BasePrice        float64 `json:"base_price"`
+	AddonPrice       float64 `json:"addon_price"`
+	SeasonMultiplier float64 `json:"season_multiplier"`
+	FinalPrice       float64 `json:"final_price"`
 }

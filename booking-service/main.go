@@ -1,28 +1,32 @@
 package main
 
 import (
-	"log"
+	"context"
 
 	"booking-service/internal"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	fiberadapter "github.com/awslabs/aws-lambda-go-api-proxy/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
-func main() {
+var fiberLambda *fiberadapter.FiberLambda
+
+func init() {
 	cfg := internal.LoadConfig()
 
 	db := internal.ConnectDB(cfg.DatabaseURL)
-	defer db.Close()
-
 	redisClient := internal.ConnectRedis(cfg)
-	defer redisClient.Close()
 
-	bookingService := internal.NewBookingService(db, redisClient, cfg)
-	handler := internal.NewBookingHandler(bookingService)
+	service := internal.NewBookingService(db, redisClient, cfg)
+	handler := internal.NewBookingHandler(service)
 
 	app := fiber.New()
 
-	api := app.Group("/bookings")
+	api := app.Group(
+		"/bookings",
+	)
 
 	api.Post("/", handler.CreateBooking)
 	api.Get("/:id", handler.GetBooking)
@@ -30,5 +34,13 @@ func main() {
 	api.Post("/:id/cancel", handler.CancelBooking)
 	api.Get("/slots/availability", handler.CheckSlotAvailability)
 
-	log.Fatal(app.Listen(":" + cfg.Port))
+	fiberLambda = fiberadapter.New(app)
+}
+
+func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+	return fiberLambda.ProxyWithContext(ctx, req)
+}
+
+func main() {
+	lambda.Start(Handler)
 }

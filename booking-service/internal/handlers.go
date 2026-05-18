@@ -1,10 +1,6 @@
 package internal
 
-import (
-	"time"
-
-	"github.com/gofiber/fiber/v3"
-)
+import "github.com/gofiber/fiber/v2"
 
 type BookingHandler struct {
 	service *BookingService
@@ -14,10 +10,10 @@ func NewBookingHandler(service *BookingService) *BookingHandler {
 	return &BookingHandler{service: service}
 }
 
-func (h *BookingHandler) CreateBooking(c fiber.Ctx) error {
+func (h *BookingHandler) CreateBooking(c *fiber.Ctx) error {
 	var req CreateBookingRequest
 
-	if err := c.Bind().Body(&req); err != nil {
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "invalid request"})
 	}
 
@@ -29,10 +25,8 @@ func (h *BookingHandler) CreateBooking(c fiber.Ctx) error {
 	return c.Status(201).JSON(booking)
 }
 
-func (h *BookingHandler) GetBooking(c fiber.Ctx) error {
-	id := c.Params("id")
-
-	booking, err := h.service.GetBooking(c.Context(), id)
+func (h *BookingHandler) GetBooking(c *fiber.Ctx) error {
+	booking, err := h.service.GetBooking(c.Context(), c.Params("id"))
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{"error": "booking not found"})
 	}
@@ -40,15 +34,14 @@ func (h *BookingHandler) GetBooking(c fiber.Ctx) error {
 	return c.JSON(booking)
 }
 
-func (h *BookingHandler) UpdateBooking(c fiber.Ctx) error {
-	id := c.Params("id")
-
+func (h *BookingHandler) UpdateBooking(c *fiber.Ctx) error {
 	var req UpdateBookingRequest
-	if err := c.Bind().Body(&req); err != nil {
+
+	if err := c.BodyParser(&req); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "invalid request"})
 	}
 
-	booking, err := h.service.UpdateBooking(c.Context(), id, req)
+	booking, err := h.service.UpdateBooking(c.Context(), c.Params("id"), req)
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
@@ -56,45 +49,31 @@ func (h *BookingHandler) UpdateBooking(c fiber.Ctx) error {
 	return c.JSON(booking)
 }
 
-func (h *BookingHandler) CancelBooking(c fiber.Ctx) error {
-	id := c.Params("id")
-
-	if err := h.service.CancelBooking(c.Context(), id); err != nil {
+func (h *BookingHandler) CancelBooking(c *fiber.Ctx) error {
+	err := h.service.CancelBooking(c.Context(), c.Params("id"))
+	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.JSON(fiber.Map{
-		"message": "booking cancelled successfully",
-	})
+	return c.JSON(fiber.Map{"message": "booking cancelled successfully"})
 }
 
-func (h *BookingHandler) CheckSlotAvailability(c fiber.Ctx) error {
-	serviceID := c.Query("service_id")
-	start := c.Query("slot_start")
-	end := c.Query("slot_end")
+func (h *BookingHandler) CheckSlotAvailability(c *fiber.Ctx) error {
+	date := c.Query("date")
+	slot := c.Query("slot")
 
-	slotStart, err := time.Parse(time.RFC3339, start)
+	if date == "" || slot == "" {
+		return c.Status(400).JSON(fiber.Map{"error": "date and slot are required"})
+	}
+
+	available, err := h.service.CheckSlotAvailability(c.Context(), date, slot)
 	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "invalid slot_start"})
+		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	slotEnd, err := time.Parse(time.RFC3339, end)
-	if err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "invalid slot_end"})
-	}
-
-	available, err := h.service.IsSlotAvailable(c.Context(), serviceID, slotStart, slotEnd)
-	if err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": "availability check failed"})
-	}
-
-	message := "slot not available"
-	if available {
-		message = "slot available"
-	}
-
-	return c.JSON(AvailabilityResponse{
-		Available: available,
-		Message:   message,
+	return c.JSON(fiber.Map{
+		"date":      date,
+		"slot":      slot,
+		"available": available,
 	})
 }

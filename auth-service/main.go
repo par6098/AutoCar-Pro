@@ -1,37 +1,70 @@
 package main
 
 import (
-	"log"
+	"context"
 
 	"auth-service/internal"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	fiberadapter "github.com/awslabs/aws-lambda-go-api-proxy/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
-func main() {
-	cfg := internal.LoadConfig()
-	db := internal.ConnectDB(cfg.DatabaseURL)
-	defer db.Close()
+var fiberLambda *fiberadapter.FiberLambda
 
-	app := fiber.New()
+func init() {
+
+	cfg := internal.LoadConfig()
+
+	db := internal.ConnectDB(cfg.DatabaseURL)
 
 	h := internal.NewHandler(db, cfg)
 
+	app := fiber.New()
+
+	// Public Routes
 	app.Post("/auth/register", h.Register)
 	app.Post("/auth/login", h.Login)
 	app.Post("/auth/refresh", h.RefreshToken)
 
+	// Protected Routes
 	protected := app.Group("/api", internal.JWTMiddleware(cfg))
+
 	protected.Get("/me", h.Me)
 
-	admin := protected.Group("/admin", internal.RequireRole("admin"))
-	admin.Get("/dashboard", h.AdminDashboard)
+	// Admin
+	protected.Get(
+		"/admin/dashboard",
+		internal.RequireRole("admin"),
+		h.AdminDashboard,
+	)
 
-	employee := protected.Group("/employee", internal.RequireRole("employee"))
-	employee.Get("/dashboard", h.EmployeeDashboard)
+	// Employee
+	protected.Get(
+		"/employee/dashboard",
+		internal.RequireRole("employee"),
+		h.EmployeeDashboard,
+	)
 
-	customer := protected.Group("/customer", internal.RequireRole("customer"))
-	customer.Get("/dashboard", h.CustomerDashboard)
+	// Customer
+	protected.Get(
+		"/customer/dashboard",
+		internal.RequireRole("customer"),
+		h.CustomerDashboard,
+	)
 
-	log.Fatal(app.Listen(":" + cfg.Port))
+	fiberLambda = fiberadapter.New(app)
+}
+
+func Handler(
+	ctx context.Context,
+	req events.APIGatewayProxyRequest,
+) (events.APIGatewayProxyResponse, error) {
+
+	return fiberLambda.ProxyWithContext(ctx, req)
+}
+
+func main() {
+	lambda.Start(Handler)
 }

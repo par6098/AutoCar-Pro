@@ -1,0 +1,145 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Globals:
+  Function:
+    Runtime: provided.al2023
+    Architectures:
+      - x86_64
+    Timeout: 30
+    MemorySize: 512
+    Environment:
+      Variables:
+        JWT_SECRET: autocare_secret_key
+        REDIS_ADDR: host.docker.internal:6379
+        REDIS_PASSWORD: ""
+        REDIS_DB: "0"
+
+Resources:
+
+  AuthFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: auth-service/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/authdb?sslmode=disable
+          ACCESS_TOKEN_MINUTES: "15"
+          REFRESH_TOKEN_DAYS: "30"
+      Events:
+        AuthRootApi:
+          Type: Api
+          Properties:
+            Path: /auth
+            Method: ANY
+        AuthProxyApi:
+          Type: Api
+          Properties:
+            Path: /auth/{proxy+}
+            Method: ANY
+
+  BookingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: booking-service/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/bookingdb?sslmode=disable
+          BOOKING_EVENT_QUEUE: booking-events
+      Events:
+        BookingRootApi:
+          Type: Api
+          Properties:
+            Path: /bookings
+            Method: ANY
+        BookingProxyApi:
+          Type: Api
+          Properties:
+            Path: /bookings/{proxy+}
+            Method: ANY
+
+  CatalogFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: service-catalog/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/catalogdb?sslmode=disable
+      Events:
+        CatalogRootApi:
+          Type: Api
+          Properties:
+            Path: /catalog
+            Method: ANY
+        CatalogProxyApi:
+          Type: Api
+          Properties:
+            Path: /catalog/{proxy+}
+            Method: ANY
+
+  UserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: user-service/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/userdb?sslmode=disable
+      Events:
+        UserRootApi:
+          Type: Api
+          Properties:
+            Path: /users
+            Method: ANY
+        UserProxyApi:
+          Type: Api
+          Properties:
+            Path: /users/{proxy+}
+            Method: ANY
+
+  EmployeeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: employee-service/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/employeedb?sslmode=disable
+      Events:
+        EmployeeRootApi:
+          Type: Api
+          Properties:
+            Path: /employee
+            Method: ANY
+        EmployeeProxyApi:
+          Type: Api
+          Properties:
+            Path: /employee/{proxy+}
+            Method: ANY
+
+  AnalyticsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: analytics-service/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          CLICKHOUSE_ADDR: host.docker.internal:9000
+          CLICKHOUSE_DB: autocare_analytics
+          CLICKHOUSE_USER: default
+          CLICKHOUSE_PASSWORD: clickhouse123
+          BOOKING_EVENT_QUEUE: booking-events
+      Events:
+        AnalyticsRootApi:
+          Type: Api
+          Properties:
+            Path: /analytics
+            Method: ANY
+        AnalyticsProxyApi:
+          Type: Api
+          Properties:
+            Path: /analytics/{proxy+}
+            Method: ANY

@@ -1,0 +1,1100 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.x/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:#0F1F3D;--brand2:#1A3460;--accent:#F5A623;--accent2:#E8922B;
+  --teal:#0EA5A0;--teal2:#0C8C88;
+  --danger:#E53E3E;--success:#38A169;
+  --bg:#F4F3EF;--bg2:#ECEAE4;--surface:#FFFFFF;--surface2:#F9F8F5;
+  --txt:#1A1A1A;--txt2:#5A5A5A;--txt3:#9A9A9A;
+  --border:#E2E0D8;--border2:#D0CEC4;
+  --radius:10px;--radius-lg:16px;--radius-xl:24px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 12px rgba(0,0,0,.06);
+  --shadow-lg:0 4px 16px rgba(0,0,0,.1),0 12px 40px rgba(0,0,0,.08);
+  --font:'DM Sans',sans-serif;--mono:'Space Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--txt);font-size:14px;overflow-x:hidden;min-height:100vh}
+
+/* ── TOPBAR ── */
+.topbar{height:52px;background:var(--brand);display:flex;align-items:center;padding:0 20px;gap:12px;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 rgba(255,255,255,.07)}
+.topbar-logo{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.logo-mark{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-mark i{font-size:16px;color:var(--brand)}
+.logo-wordmark{font-family:var(--mono);font-size:13px;font-weight:700;color:#fff;letter-spacing:-.5px}
+.logo-sub{font-size:9px;color:rgba(255,255,255,.4);letter-spacing:.06em;margin-left:1px;display:block;line-height:1}
+.topbar-nav{display:flex;gap:2px;margin-left:20px;flex:1;overflow-x:auto}
+.topbar-nav::-webkit-scrollbar{display:none}
+.tnav{padding:5px 11px;border-radius:7px;font-size:12px;font-weight:500;color:rgba(255,255,255,.55);cursor:pointer;white-space:nowrap;transition:all .15s;border:none;background:transparent}
+.tnav:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.08)}
+.tnav.active{color:#fff;background:rgba(255,255,255,.14)}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
+.portal-pill{display:flex;border:0.5px solid rgba(255,255,255,.2);border-radius:20px;overflow:hidden}
+.pp{padding:4px 10px;font-size:11px;color:rgba(255,255,255,.5);cursor:pointer;transition:all .15s}
+.pp.active{background:var(--accent);color:var(--brand);font-weight:600}
+.tb-avatar{width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;cursor:pointer}
+
+/* ── LAYOUT ── */
+.shell{display:flex;min-height:calc(100vh - 52px)}
+.sidebar{width:212px;background:var(--surface);border-right:0.5px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.sidebar::-webkit-scrollbar{width:3px}.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sidebar-inner{padding:14px 8px;flex:1}
+.s-section{margin-bottom:18px}
+.s-label{font-size:10px;color:var(--txt3);letter-spacing:.08em;font-weight:600;padding:0 8px 6px;display:block}
+.s-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:8px;font-size:12.5px;font-weight:500;color:var(--txt2);cursor:pointer;transition:all .12s;border:none;background:none;width:100%;text-align:left}
+.s-item:hover{background:var(--bg);color:var(--txt)}
+.s-item.active{background:var(--brand);color:#fff}
+.s-item i{font-size:16px;flex-shrink:0}
+.s-badge{margin-left:auto;background:var(--accent);color:var(--brand);font-size:10px;font-weight:700;padding:1px 6px;border-radius:20px;font-family:var(--mono)}
+.s-item.active .s-badge{background:#fff;color:var(--brand)}
+.sidebar-footer{padding:12px 8px;border-top:0.5px solid var(--border)}
+.biz-card{background:var(--bg);border-radius:10px;padding:10px;font-size:11px}
+.biz-name{font-weight:600;color:var(--txt);margin-bottom:2px}
+.biz-plan{color:var(--teal);font-weight:500}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;min-width:0}
+.main::-webkit-scrollbar{width:4px}.main::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.page{padding:20px;display:none;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── PAGE HEADER ── */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.ph-left{}
+.ph-title{font-size:20px;font-weight:600;color:var(--txt);letter-spacing:-.4px;font-family:var(--mono)}
+.ph-sub{font-size:12px;color:var(--txt2);margin-top:3px}
+.ph-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .15s;font-family:var(--font)}
+.btn-primary{background:var(--brand);color:#fff}.btn-primary:hover{background:var(--brand2)}
+.btn-accent{background:var(--accent);color:var(--brand);font-weight:600}.btn-accent:hover{background:var(--accent2)}
+.btn-ghost{background:var(--surface);color:var(--txt2);border:0.5px solid var(--border)}.btn-ghost:hover{background:var(--bg);color:var(--txt)}
+.btn-teal{background:var(--teal);color:#fff}.btn-teal:hover{background:var(--teal2)}
+.btn-danger{background:#FEE2E2;color:var(--danger);border:0.5px solid #FECACA}.btn-danger:hover{background:#FECACA}
+.btn i{font-size:15px}
+
+/* ── STAT CARDS ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:0 0 0 60px;opacity:.06}
+.stat-card.s-blue::before{background:#2563EB}
+.stat-card.s-amber::before{background:#F59E0B}
+.stat-card.s-teal::before{background:#0EA5A0}
+.stat-card.s-red::before{background:#E53E3E}
+.stat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.stat-val{font-size:24px;font-weight:700;color:var(--txt);font-family:var(--mono);letter-spacing:-1px}
+.stat-lbl{font-size:11px;color:var(--txt2);margin-top:3px;font-weight:500}
+.stat-chg{display:flex;align-items:center;gap:4px;font-size:11px;margin-top:8px}
+.chg-up{color:var(--success)}.chg-dn{color:var(--danger)}.chg-neu{color:var(--txt3)}
+
+/* ── CARDS ── */
+.card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.card-title{font-size:13px;font-weight:600;color:var(--txt);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card-title-left{display:flex;align-items:center;gap:8px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;border-radius:var(--radius-lg);border:0.5px solid var(--border);background:var(--surface)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:600;color:var(--txt3);text-align:left;padding:10px 14px;border-bottom:0.5px solid var(--border);background:var(--surface2);letter-spacing:.04em;white-space:nowrap}
+td{font-size:12.5px;padding:10px 14px;border-bottom:0.5px solid var(--border);color:var(--txt);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--bg)}
+.td-mono{font-family:var(--mono);font-size:11px;color:var(--txt2)}
+.td-name{font-weight:500}
+.td-sub{font-size:10px;color:var(--txt3);margin-top:1px}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600;white-space:nowrap}
+.badge::before{content:'';width:5px;height:5px;border-radius:50%}
+.bg-green{background:#DCFCE7;color:#166534}.bg-green::before{background:#16A34A}
+.bg-blue{background:#DBEAFE;color:#1E40AF}.bg-blue::before{background:#2563EB}
+.bg-amber{background:#FEF3C7;color:#92400E}.bg-amber::before{background:#D97706}
+.bg-red{background:#FEE2E2;color:#991B1B}.bg-red::before{background:#DC2626}
+.bg-gray{background:#F3F4F6;color:#374151}.bg-gray::before{background:#9CA3AF}
+.bg-teal{background:#CCFBF1;color:#134E4A}.bg-teal::before{background:#0D9488}
+.bg-purple{background:#EDE9FE;color:#4C1D95}.bg-purple::before{background:#7C3AED}
+
+/* ── MINI CHART ── */
+.chart-bars{display:flex;align-items:flex-end;gap:5px;height:72px}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar-fill{width:100%;border-radius:4px 4px 0 0;min-height:4px;transition:height .3s}
+.bar-lbl{font-size:9px;color:var(--txt3);font-family:var(--mono)}
+
+/* ── TIMELINE ── */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:12px;padding-bottom:14px;position:relative}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:13px;top:28px;bottom:0;width:0.5px;background:var(--border)}
+.tl-dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tl-dot.done{background:#DCFCE7}.tl-dot.done i{font-size:13px;color:#16A34A}
+.tl-dot.active{background:#DBEAFE}.tl-dot.active i{font-size:13px;color:#2563EB}
+.tl-dot.pending{background:var(--bg2)}.tl-dot.pending i{font-size:13px;color:var(--txt3)}
+.tl-body{flex:1;padding-top:4px}
+.tl-title{font-size:12px;font-weight:500;color:var(--txt)}
+.tl-meta{font-size:10px;color:var(--txt3);margin-top:2px}
+
+/* ── FORM ── */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--txt2);margin-bottom:5px;letter-spacing:.03em}
+.form-input,.form-select,.form-textarea{width:100%;background:var(--bg);border:0.5px solid var(--border2);border-radius:8px;padding:8px 11px;font-size:12.5px;color:var(--txt);font-family:var(--font);outline:none;transition:border-color .15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--brand);background:var(--surface)}
+.form-textarea{resize:none;line-height:1.6}
+
+/* ── TOGGLES ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:0.5px solid var(--border)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info{font-size:12.5px;font-weight:500;color:var(--txt)}
+.toggle-sub{font-size:11px;color:var(--txt3);margin-top:2px}
+.toggle-switch{width:38px;height:21px;background:var(--border2);border-radius:11px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0}
+.toggle-switch.on{background:var(--brand)}
+.toggle-switch::after{content:'';position:absolute;width:15px;height:15px;background:#fff;border-radius:50%;top:3px;left:3px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle-switch.on::after{left:20px}
+
+/* ── PACKAGES ── */
+.pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.pkg-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:18px;position:relative;transition:box-shadow .2s}
+.pkg-card:hover{box-shadow:var(--shadow-lg)}
+.pkg-card.featured{border:1.5px solid var(--brand);background:linear-gradient(145deg,#FAFDF8,#F4F3EF)}
+.pkg-pop{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;font-size:9.5px;font-weight:700;padding:2px 12px;border-radius:0 0 8px 8px;letter-spacing:.04em;font-family:var(--mono)}
+.pkg-name{font-size:14px;font-weight:600;color:var(--txt);margin-bottom:4px}
+.pkg-price{font-size:26px;font-weight:700;color:var(--brand);font-family:var(--mono);letter-spacing:-1px}
+.pkg-per{font-size:12px;font-weight:400;color:var(--txt3)}
+.pkg-features{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.pkg-feat{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--txt2)}
+.pkg-feat i{font-size:14px}
+.pkg-feat.yes i{color:var(--success)}
+.pkg-feat.no i{color:var(--border2)}
+
+/* ── EMP CARDS ── */
+.emp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.emp-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;display:flex;gap:12px;align-items:center}
+.emp-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;font-family:var(--mono)}
+.emp-name{font-size:12.5px;font-weight:600;color:var(--txt)}
+.emp-role{font-size:11px;color:var(--txt3);margin-top:1px}
+.emp-jobs{margin-top:5px}
+
+/* ── MSG PANEL ── */
+.msg-panel{display:grid;grid-template-columns:240px 1fr;gap:0;border:0.5px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;background:var(--surface);min-height:360px}
+.msg-list-panel{border-right:0.5px solid var(--border)}
+.msg-search{padding:10px;border-bottom:0.5px solid var(--border)}
+.msg-search input{width:100%;background:var(--bg);border:0.5px solid var(--border2);border-radius:7px;padding:7px 10px;font-size:12px;font-family:var(--font);outline:none;color:var(--txt)}
+.msg-item{padding:12px 14px;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background .12s;display:flex;gap:10px}
+.msg-item:hover{background:var(--bg)}
+.msg-item.active{background:var(--brand)}
+.msg-item.active .msg-name,.msg-item.active .msg-prev,.msg-item.active .msg-time{color:#fff!important}
+.msg-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.msg-name{font-size:12px;font-weight:600;color:var(--txt)}
+.msg-prev{font-size:11px;color:var(--txt3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-time{font-size:10px;color:var(--txt3);white-space:nowrap}
+.msg-unread{width:8px;height:8px;background:var(--accent);border-radius:50%;flex-shrink:0;margin-top:2px}
+.chat-panel{display:flex;flex-direction:column}
+.chat-header{padding:14px 16px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:10px}
+.chat-messages{flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;min-height:240px;background:var(--surface2)}
+.chat-bubble{max-width:70%;padding:9px 12px;border-radius:12px;font-size:12px;line-height:1.5}
+.chat-in{background:var(--surface);border:0.5px solid var(--border);align-self:flex-start;border-radius:4px 12px 12px 12px}
+.chat-out{background:var(--brand);color:#fff;align-self:flex-end;border-radius:12px 4px 12px 12px}
+.chat-time{font-size:9px;opacity:.6;margin-top:3px}
+.chat-input-row{padding:10px 14px;border-top:0.5px solid var(--border);display:flex;gap:8px}
+.chat-input-row input{flex:1;background:var(--bg);border:0.5px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;font-family:var(--font);outline:none}
+
+/* ── PAYMENT ── */
+.pay-methods{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.pay-method{flex:1;min-width:80px;background:var(--surface);border:0.5px solid var(--border2);border-radius:10px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:all .15s;font-size:11px;color:var(--txt2);font-weight:500}
+.pay-method:hover,.pay-method.active{border-color:var(--brand);background:var(--bg);color:var(--brand)}
+.pay-method i{font-size:22px}
+.pay-method.active{border-width:1.5px}
+.pay-summary{background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:14px}
+.pay-row{display:flex;justify-content:space-between;font-size:12.5px;color:var(--txt2);padding:5px 0}
+.pay-divider{border:none;border-top:0.5px solid var(--border);margin:8px 0}
+.pay-total{display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:var(--txt);font-family:var(--mono)}
+.qr-container{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:20px;text-align:center}
+.qr-grid{display:grid;grid-template-columns:repeat(9,1fr);gap:3px;width:108px;margin:14px auto 10px}
+.qr-c{aspect-ratio:1;border-radius:1px;background:var(--brand)}
+.qr-w{background:transparent;border:0.5px solid var(--border)}
+
+/* ── BOOKING FLOW ── */
+.step-nav{display:flex;gap:0;background:var(--bg);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:20px;width:fit-content}
+.step{padding:7px 16px;font-size:12px;font-weight:500;color:var(--txt3);cursor:pointer;transition:all .15s}
+.step.active{background:var(--brand);color:#fff}
+.step.done{background:var(--bg2);color:var(--success)}
+.time-slot-grid{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.tslot{padding:6px 13px;border-radius:8px;font-size:12px;border:0.5px solid var(--border2);cursor:pointer;transition:all .15s;background:var(--surface);color:var(--txt2);font-weight:500}
+.tslot:hover{border-color:var(--brand);color:var(--brand)}
+.tslot.sel{border-color:var(--brand);background:var(--brand);color:#fff}
+.tslot.unavail{opacity:.4;cursor:not-allowed}
+.service-option{border:0.5px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all .15s;margin-bottom:8px;background:var(--surface)}
+.service-option:hover{border-color:var(--brand)}
+.service-option.sel{border:1.5px solid var(--brand);background:var(--bg)}
+.service-option.sel .so-radio{background:var(--brand);border-color:var(--brand)}
+.service-option.sel .so-radio::after{display:block}
+.so-radio{width:16px;height:16px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;position:relative}
+.so-radio::after{content:'';display:none;width:8px;height:8px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px}
+
+/* ── SETTINGS ── */
+.settings-layout{display:grid;grid-template-columns:180px 1fr;gap:14px}
+.settings-sidebar{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:8px;align-self:start}
+.ss-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;font-size:12.5px;color:var(--txt2);cursor:pointer;transition:all .12s;font-weight:500}
+.ss-item:hover{background:var(--bg);color:var(--txt)}
+.ss-item.active{background:var(--brand);color:#fff}
+.ss-item i{font-size:15px}
+
+/* ── CUSTOMER PORTAL ── */
+.hero{background:var(--brand);border-radius:var(--radius-xl);padding:30px 32px;margin-bottom:20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero::after{content:'';position:absolute;right:60px;bottom:-60px;width:140px;height:140px;border-radius:50%;background:rgba(245,166,35,.08)}
+.hero-tag{display:inline-block;background:var(--accent);color:var(--brand);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;margin-bottom:12px;font-family:var(--mono)}
+.hero-title{font-size:26px;font-weight:600;color:#fff;margin-bottom:8px;letter-spacing:-.5px;line-height:1.2}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:18px;max-width:400px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:24px;margin-top:20px;padding-top:20px;border-top:0.5px solid rgba(255,255,255,.12)}
+.hs-item{text-align:center}
+.hs-val{font-size:20px;font-weight:700;color:#fff;font-family:var(--mono)}
+.hs-lbl{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+
+.service-grid-cust{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.svc-card{background:var(--surface);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:16px;cursor:pointer;transition:all .2s;text-align:center}
+.svc-card:hover{box-shadow:var(--shadow-lg);transform:translateY(-2px);border-color:var(--brand)}
+.svc-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.svc-icon i{font-size:24px}
+.svc-name{font-size:13px;font-weight:600;color:var(--txt)}
+.svc-price{font-size:11px;color:var(--txt3);margin-top:3px}
+.svc-cta{margin-top:8px;font-size:11px;color:var(--brand);font-weight:600;opacity:0;transition:opacity .15s}
+.svc-card:hover .svc-cta{opacity:1}
+
+/* ── RESPONSIVE ── */
+@media(max-width:700px){.stat-grid{grid-template-columns:1fr 1fr}.pkg-grid{grid-template-columns:1fr}.emp-grid{grid-template-columns:1fr 1fr}.two-col,.form-row{grid-template-columns:1fr}.settings-layout{grid-template-columns:1fr}.service-grid-cust{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo" onclick="switchPortal('admin')">
+    <div class="logo-mark"><i class="ti ti-car-garage"></i></div>
+    <div><div class="logo-wordmark">AutoCare Pro</div><div class="logo-sub">PLATFORM</div></div>
+  </div>
+  <div class="topbar-nav" id="topbarNav"></div>
+  <div class="topbar-right">
+    <div class="portal-pill">
+      <div class="pp active" id="pp-admin" onclick="switchPortal('admin')">Admin</div>
+      <div class="pp" id="pp-customer" onclick="switchPortal('customer')">Customer</div>
+    </div>
+    <div class="tb-avatar" title="Logged in as Admin">A</div>
+  </div>
+</div>
+
+<!-- SHELL -->
+<div class="shell">
+  <div class="sidebar" id="sidebarEl"></div>
+  <div class="main" id="mainEl"></div>
+</div>
+
+<script>
+const PORTALS = {
+  admin: {
+    nav: [
+      {id:'dash', label:'Dashboard', icon:'ti-layout-dashboard'},
+      {id:'bookings', label:'Bookings', icon:'ti-calendar-check', badge:12},
+      {id:'packages', label:'Services & Packages', icon:'ti-package'},
+      {id:'employees', label:'Team', icon:'ti-users'},
+      {id:'messages', label:'Messages', icon:'ti-message-circle', badge:5},
+      {id:'billing', label:'Billing', icon:'ti-receipt'},
+      {id:'settings', label:'Settings', icon:'ti-settings'},
+    ],
+    sections: [
+      {label:'OVERVIEW', items:['dash','bookings']},
+      {label:'OPERATIONS', items:['packages','employees']},
+      {label:'BUSINESS', items:['messages','billing','settings']},
+    ]
+  },
+  customer: {
+    nav: [
+      {id:'cust-home', label:'Home', icon:'ti-home'},
+      {id:'cust-book', label:'Book a Service', icon:'ti-calendar-plus'},
+      {id:'cust-track', label:'My Bookings', icon:'ti-list-check'},
+      {id:'cust-billing', label:'Payments', icon:'ti-credit-card'},
+      {id:'cust-profile', label:'My Profile', icon:'ti-user'},
+    ],
+    sections: [
+      {label:'CUSTOMER', items:['cust-home','cust-book','cust-track','cust-billing','cust-profile']},
+    ]
+  }
+};
+
+let currentPortal = 'admin';
+let currentPage = 'dash';
+
+function switchPortal(p) {
+  currentPortal = p;
+  document.getElementById('pp-admin').classList.toggle('active', p==='admin');
+  document.getElementById('pp-customer').classList.toggle('active', p==='customer');
+  const first = PORTALS[p].nav[0].id;
+  buildSidebar();
+  navigateTo(first);
+}
+
+function buildSidebar() {
+  const p = PORTALS[currentPortal];
+  let html = '<div class="sidebar-inner">';
+  p.sections.forEach(sec => {
+    html += `<div class="s-section"><span class="s-label">${sec.label}</span>`;
+    sec.items.forEach(id => {
+      const item = p.nav.find(n=>n.id===id);
+      if(!item) return;
+      const badge = item.badge ? `<span class="s-badge">${item.badge}</span>` : '';
+      html += `<button class="s-item${currentPage===id?' active':''}" onclick="navigateTo('${id}')"><i class="ti ${item.icon}"></i>${item.label}${badge}</button>`;
+    });
+    html += '</div>';
+  });
+  html += '</div><div class="sidebar-footer"><div class="biz-card"><div class="biz-name">AutoCare Pro</div><div class="biz-plan">Chandigarh Branch</div><div style="font-size:10px;color:var(--txt3);margin-top:2px">24 employees · Pro Plan</div></div></div>';
+  document.getElementById('sidebarEl').innerHTML = html;
+}
+
+function navigateTo(id) {
+  currentPage = id;
+  buildSidebar();
+  renderPage(id);
+}
+
+function renderPage(id) {
+  const el = document.getElementById('mainEl');
+  const fn = PAGES[id];
+  el.innerHTML = fn ? fn() : `<div class="page active" style="padding:40px;text-align:center;color:var(--txt3)"><i class="ti ti-construction" style="font-size:48px;display:block;margin-bottom:12px"></i>Page coming soon</div>`;
+}
+
+/* ──────── PAGE RENDERERS ──────── */
+const PAGES = {
+
+/* ── ADMIN DASHBOARD ── */
+'dash': () => `<div class="page active">
+<div class="ph">
+  <div class="ph-left"><div class="ph-title">Dashboard</div><div class="ph-sub">Sunday 17 May 2026 — Live operations overview</div></div>
+  <div class="ph-right">
+    <button class="btn btn-ghost"><i class="ti ti-calendar"></i>This month</button>
+    <button class="btn btn-accent" onclick="navigateTo('bookings')"><i class="ti ti-plus"></i>New booking</button>
+  </div>
+</div>
+<div class="stat-grid">
+  <div class="stat-card s-blue">
+    <div class="stat-icon" style="background:#EFF6FF"><i class="ti ti-calendar-check" style="font-size:18px;color:#2563EB"></i></div>
+    <div class="stat-val">148</div><div class="stat-lbl">Bookings this month</div>
+    <div class="stat-chg chg-up"><i class="ti ti-trending-up" style="font-size:12px"></i>+12% vs last month</div>
+  </div>
+  <div class="stat-card s-amber">
+    <div class="stat-icon" style="background:#FFFBEB"><i class="ti ti-currency-rupee" style="font-size:18px;color:#D97706"></i></div>
+    <div class="stat-val">₹2.4L</div><div class="stat-lbl">Revenue this month</div>
+    <div class="stat-chg chg-up"><i class="ti ti-trending-up" style="font-size:12px"></i>+8% vs last month</div>
+  </div>
+  <div class="stat-card s-teal">
+    <div class="stat-icon" style="background:#CCFBF1"><i class="ti ti-user-check" style="font-size:18px;color:#0EA5A0"></i></div>
+    <div class="stat-val">24</div><div class="stat-lbl">Active employees</div>
+    <div class="stat-chg chg-neu">3 on leave today</div>
+  </div>
+  <div class="stat-card s-red">
+    <div class="stat-icon" style="background:#FEF3C7"><i class="ti ti-star" style="font-size:18px;color:#D97706"></i></div>
+    <div class="stat-val">4.8</div><div class="stat-lbl">Avg customer rating</div>
+    <div class="stat-chg chg-up"><i class="ti ti-trending-up" style="font-size:12px"></i>312 reviews total</div>
+  </div>
+</div>
+<div class="two-col">
+  <div class="card">
+    <div class="card-title"><span>Revenue — this week</span><button class="btn btn-ghost" style="font-size:11px;padding:4px 9px">Export</button></div>
+    <div class="chart-bars">
+      ${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d,i)=>{
+        const h=[55,72,48,88,94,76,62][i];
+        const col=i===4?'var(--accent)':'var(--brand)';
+        return `<div class="bar-col"><div class="bar-fill" style="height:${h}%;background:${col};width:100%"></div><div class="bar-lbl">${d}</div></div>`;
+      }).join('')}
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:var(--txt3)">
+      <span>Peak: Friday</span><span>₹38,400 total</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">Today's jobs <span class="badge bg-blue">12 active</span></div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot done"><i class="ti ti-check"></i></div><div class="tl-body"><div class="tl-title">Honda City — Full wash</div><div class="tl-meta">9:00 AM · Ravi Kumar · ₹799</div></div></div>
+      <div class="tl-item"><div class="tl-dot active"><i class="ti ti-clock"></i></div><div class="tl-body"><div class="tl-title">Toyota Fortuner — Premium detailing</div><div class="tl-meta">11:30 AM · Suresh Pal · In progress</div></div></div>
+      <div class="tl-item"><div class="tl-dot pending"><i class="ti ti-circle"></i></div><div class="tl-body"><div class="tl-title">Swift Dzire — Pick & Drop</div><div class="tl-meta">2:00 PM · Amit Singh · Scheduled</div></div></div>
+      <div class="tl-item"><div class="tl-dot pending"><i class="ti ti-circle"></i></div><div class="tl-body"><div class="tl-title">XUV700 — Gold Detailing</div><div class="tl-meta">4:00 PM · Unassigned</div></div></div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title"><span>Recent bookings</span>
+    <div style="display:flex;gap:6px">
+      <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px"><i class="ti ti-filter" style="font-size:13px"></i>Filter</button>
+      <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="navigateTo('bookings')">View all</button>
+    </div>
+  </div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>#ID</th><th>Customer</th><th>Service</th><th>Vehicle</th><th>Schedule</th><th>Assigned</th><th>Amount</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="td-mono">#1042</td><td><div class="td-name">Priya Sharma</div><div class="td-sub">9876543210</div></td><td>Premium Wash</td><td>Hyundai Creta</td><td>Today 11am</td><td>Ravi K.</td><td class="td-mono">₹799</td><td><span class="badge bg-green">Completed</span></td></tr>
+      <tr><td class="td-mono">#1043</td><td><div class="td-name">Arjun Mehta</div><div class="td-sub">9812345670</div></td><td>Interior Deep Clean</td><td>Maruti Baleno</td><td>Today 2pm</td><td>Suresh P.</td><td class="td-mono">₹1,199</td><td><span class="badge bg-blue">In Progress</span></td></tr>
+      <tr><td class="td-mono">#1044</td><td><div class="td-name">Nisha Patel</div><div class="td-sub">9855671234</div></td><td>Pick & Drop + Wash</td><td>Toyota Innova</td><td>Today 4pm</td><td>Amit S.</td><td class="td-mono">₹1,499</td><td><span class="badge bg-amber">Scheduled</span></td></tr>
+      <tr><td class="td-mono">#1045</td><td><div class="td-name">Rohit Gupta</div><div class="td-sub">9890123456</div></td><td>Gold Detailing</td><td>MG XUV700</td><td>Tomorrow 10am</td><td>—</td><td class="td-mono">₹3,499</td><td><span class="badge bg-gray">Pending</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>`,
+
+/* ── BOOKINGS ── */
+'bookings': () => `<div class="page active">
+<div class="ph">
+  <div><div class="ph-title">All Bookings</div><div class="ph-sub">Manage, assign and track every service booking</div></div>
+  <div class="ph-right">
+    <input class="form-input" style="width:180px" placeholder="Search bookings…">
+    <button class="btn btn-ghost"><i class="ti ti-calendar"></i>Today</button>
+    <button class="btn btn-accent"><i class="ti ti-plus"></i>New booking</button>
+  </div>
+</div>
+<div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap">
+  <span class="badge bg-gray" style="padding:5px 12px;cursor:pointer">All (48)</span>
+  <span class="badge bg-amber" style="padding:5px 12px;cursor:pointer">Pending (8)</span>
+  <span class="badge bg-blue" style="padding:5px 12px;cursor:pointer">In Progress (12)</span>
+  <span class="badge bg-green" style="padding:5px 12px;cursor:pointer">Completed (26)</span>
+  <span class="badge bg-red" style="padding:5px 12px;cursor:pointer">Cancelled (2)</span>
+</div>
+<div class="tbl-wrap">
+<table>
+  <thead><tr><th>#ID</th><th>Customer</th><th>Service Package</th><th>Vehicle</th><th>Schedule</th><th>Assigned To</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+  <tbody>
+    ${[
+      ['#1042','Priya Sharma','9876543210','Premium Exterior Wash','Hyundai Creta','17 May · 11am','Ravi K.','₹799','Completed','bg-green'],
+      ['#1043','Arjun Mehta','9812345670','Interior Deep Clean','Maruti Baleno','17 May · 2pm','Suresh P.','₹1,199','In Progress','bg-blue'],
+      ['#1044','Nisha Patel','9855671234','Pick & Drop + Full Wash','Toyota Innova','17 May · 4pm','Amit S.','₹1,499','Scheduled','bg-amber'],
+      ['#1045','Rohit Gupta','9890123456','Gold Detailing Package','MG XUV700','18 May · 10am','—','₹3,499','Pending','bg-gray'],
+      ['#1046','Kavita Joshi','9867890123','Ceramic Coating (5yr)','Honda City','19 May · 9am','—','₹8,999','Pending','bg-gray'],
+      ['#1047','Sandeep Rana','9876001234','Basic Wash','Maruti Alto','17 May · 9am','Pavan J.','₹299','Completed','bg-green'],
+    ].map(r=>`<tr>
+      <td class="td-mono">${r[0]}</td>
+      <td><div class="td-name">${r[1]}</div><div class="td-sub">${r[2]}</div></td>
+      <td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td>
+      <td><span class="badge ${r[8]==='Completed'?'bg-green':r[8]==='In Progress'?'bg-blue':r[8]==='Scheduled'?'bg-amber':'bg-gray'}">${r[6]}</span></td>
+      <td class="td-mono">${r[7]}</td>
+      <td><span class="badge ${r[9]}">${r[8]}</span></td>
+      <td><div style="display:flex;gap:5px"><button class="btn btn-ghost" style="padding:4px 8px;font-size:11px">View</button><button class="btn btn-ghost" style="padding:4px 8px;font-size:11px">Assign</button></div></td>
+    </tr>`).join('')}
+  </tbody>
+</table>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:var(--txt3)">
+  <span>Showing 6 of 48 bookings</span>
+  <div style="display:flex;gap:6px">
+    <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px">← Prev</button>
+    <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px">Next →</button>
+  </div>
+</div>
+</div>`,
+
+/* ── PACKAGES ── */
+'packages': () => `<div class="page active">
+<div class="ph">
+  <div><div class="ph-title">Services & Packages</div><div class="ph-sub">Configure service offerings, pricing models, and add-ons</div></div>
+  <div class="ph-right">
+    <button class="btn btn-ghost"><i class="ti ti-filter"></i>Filter</button>
+    <button class="btn btn-accent"><i class="ti ti-plus"></i>Add package</button>
+  </div>
+</div>
+<div style="display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap">
+  ${['All','Washing','Detailing','Pick & Drop','Decoration','Protection'].map((t,i)=>`<button class="btn ${i===0?'btn-primary':'btn-ghost'}" style="font-size:11px;padding:5px 12px">${t}</button>`).join('')}
+</div>
+<div class="pkg-grid">
+  <div class="pkg-card">
+    <div class="pkg-name">Basic Wash</div>
+    <div style="margin-top:4px"><span class="pkg-price">₹299</span><span class="pkg-per"> / visit</span></div>
+    <div class="pkg-features">
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Exterior rinse & dry</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Wheel cleaning</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Window wipe</div>
+      <div class="pkg-feat no"><i class="ti ti-x"></i>Interior cleaning</div>
+      <div class="pkg-feat no"><i class="ti ti-x"></i>Wax / polish</div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:7px">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center;font-size:11px"><i class="ti ti-edit"></i>Edit</button>
+      <span class="badge bg-green" style="align-self:center">Active</span>
+    </div>
+  </div>
+  <div class="pkg-card featured">
+    <div class="pkg-pop">MOST POPULAR</div>
+    <div class="pkg-name" style="margin-top:8px">Premium Wash</div>
+    <div style="margin-top:4px"><span class="pkg-price">₹799</span><span class="pkg-per"> / visit</span></div>
+    <div class="pkg-features">
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Full exterior wash</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Interior vacuum</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Dashboard wipe</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Tyre shine</div>
+      <div class="pkg-feat no"><i class="ti ti-x"></i>Wax / polish</div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:7px">
+      <button class="btn btn-primary" style="flex:1;justify-content:center;font-size:11px"><i class="ti ti-edit"></i>Edit</button>
+      <span class="badge bg-green" style="align-self:center">Active</span>
+    </div>
+  </div>
+  <div class="pkg-card">
+    <div class="pkg-name">Gold Detailing</div>
+    <div style="margin-top:4px"><span class="pkg-price">₹3,499</span><span class="pkg-per"> / visit</span></div>
+    <div class="pkg-features">
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Full exterior + polish</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Deep interior clean</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Leather conditioning</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Engine bay cleaning</div>
+      <div class="pkg-feat yes"><i class="ti ti-check"></i>Ceramic wax coat</div>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:7px">
+      <button class="btn btn-ghost" style="flex:1;justify-content:center;font-size:11px"><i class="ti ti-edit"></i>Edit</button>
+      <span class="badge bg-green" style="align-self:center">Active</span>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title">Add-on services
+    <button class="btn btn-accent" style="font-size:11px;padding:5px 10px"><i class="ti ti-plus"></i>Add service</button>
+  </div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Service</th><th>Category</th><th>Duration</th><th>Vehicle type</th><th>Price</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      ${[
+        ['Pick & Drop','Logistics','—','All','₹299 flat','Active','bg-green'],
+        ['Car Decoration (Wedding)','Decoration','3–4 hrs','All','₹4,999','Active','bg-green'],
+        ['Fragrance & Sanitisation','Interior','30 min','All','₹199','Active','bg-green'],
+        ['Ceramic Coating (5yr)','Protection','2 days','Sedan/SUV','₹8,999','Draft','bg-amber'],
+        ['Paint Protection Film','Protection','1 day','All','₹14,999','Draft','bg-amber'],
+      ].map(r=>`<tr><td class="td-name">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td class="td-mono">${r[4]}</td><td><span class="badge ${r[6]}">${r[5]}</span></td><td><button class="btn btn-ghost" style="padding:3px 8px;font-size:11px"><i class="ti ti-edit" style="font-size:12px"></i></button></td></tr>`).join('')}
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>`,
+
+/* ── EMPLOYEES ── */
+'employees': () => `<div class="page active">
+<div class="ph">
+  <div><div class="ph-title">Team Management</div><div class="ph-sub">24 active employees · 3 on leave today</div></div>
+  <div class="ph-right">
+    <input class="form-input" style="width:160px" placeholder="Search team…">
+    <button class="btn btn-ghost"><i class="ti ti-filter"></i>Filter</button>
+    <button class="btn btn-accent"><i class="ti ti-user-plus"></i>Add employee</button>
+  </div>
+</div>
+<div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+  <div class="stat-card s-blue"><div class="stat-icon" style="background:#EFF6FF"><i class="ti ti-users" style="font-size:18px;color:#2563EB"></i></div><div class="stat-val">24</div><div class="stat-lbl">Total employees</div></div>
+  <div class="stat-card s-teal"><div class="stat-icon" style="background:#CCFBF1"><i class="ti ti-car" style="font-size:18px;color:#0EA5A0"></i></div><div class="stat-val">18</div><div class="stat-lbl">On duty today</div></div>
+  <div class="stat-card s-amber"><div class="stat-icon" style="background:#FFFBEB"><i class="ti ti-steering-wheel" style="font-size:18px;color:#D97706"></i></div><div class="stat-val">6</div><div class="stat-lbl">Drivers (Pick & Drop)</div></div>
+</div>
+<div class="emp-grid" style="margin-bottom:16px">
+  ${[
+    {init:'RK',name:'Ravi Kumar',role:'Senior Detailer',jobs:'3 done','bg':'#DBEAFE','tc':'#1E40AF',status:'bg-green',sl:'Completed 3'},
+    {init:'SP',name:'Suresh Pal',role:'Washer',jobs:'1 active','bg':'#D1FAE5','tc':'#065F46',status:'bg-blue',sl:'In progress'},
+    {init:'AS',name:'Amit Singh',role:'Driver',jobs:'2 scheduled','bg':'#FEF3C7','tc':'#92400E',status:'bg-amber',sl:'Scheduled 2'},
+    {init:'KM',name:'Kavita Mishra',role:'Interior Specialist',jobs:'2 done','bg':'#FCE7F3','tc':'#9D174D',status:'bg-green',sl:'Completed 2'},
+    {init:'VR',name:'Vikram Rao',role:'Driver',jobs:'On leave','bg':'#E0E7FF','tc':'#3730A3',status:'bg-gray',sl:'On leave'},
+    {init:'PJ',name:'Pavan Joshi',role:'Detailer',jobs:'1 active','bg':'#FEE2E2','tc':'#991B1B',status:'bg-blue',sl:'In progress'},
+  ].map(e=>`<div class="emp-card">
+    <div class="emp-av" style="background:${e.bg};color:${e.tc}">${e.init}</div>
+    <div style="min-width:0">
+      <div class="emp-name">${e.name}</div>
+      <div class="emp-role">${e.role}</div>
+      <div class="emp-jobs" style="margin-top:5px"><span class="badge ${e.status}" style="font-size:10px">${e.sl}</span></div>
+    </div>
+  </div>`).join('')}
+</div>
+<div class="card">
+  <div class="card-title">Attendance & shifts today <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px">Manage shifts</button></div>
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Employee</th><th>Role</th><th>Shift</th><th>Check-in</th><th>Jobs today</th><th>Performance</th><th></th></tr></thead>
+    <tbody>
+      ${[
+        ['Ravi Kumar','Senior Detailer','8am – 5pm','7:52 AM','3','Excellent','bg-green'],
+        ['Suresh Pal','Washer','10am – 7pm','9:58 AM','1','Good','bg-blue'],
+        ['Amit Singh','Driver','9am – 6pm','9:05 AM','2','Excellent','bg-green'],
+        ['Kavita Mishra','Interior Specialist','8am – 5pm','8:01 AM','2','Good','bg-blue'],
+        ['Pavan Joshi','Detailer','11am – 8pm','10:55 AM','1','Average','bg-amber'],
+      ].map(r=>`<tr><td class="td-name">${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td class="td-mono">${r[3]}</td><td class="td-mono">${r[4]}</td><td><span class="badge ${r[6]}">${r[5]}</span></td><td><button class="btn btn-ghost" style="padding:3px 8px;font-size:11px">View</button></td></tr>`).join('')}
+    </tbody>
+  </table>
+  </div>
+</div>
+</div>`,
+
+/* ── MESSAGES ── */
+'messages': () => `<div class="page active">
+<div class="ph">
+  <div><div class="ph-title">Messages</div><div class="ph-sub">Communicate with customers via SMS, email, and in-app</div></div>
+  <div class="ph-right">
+    <button class="btn btn-ghost"><i class="ti ti-filter"></i>Filter</button>
+    <button class="btn btn-accent"><i class="ti ti-speakerphone"></i>Broadcast campaign</button>
+  </div>
+</div>
+<div class="two-col">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="msg-panel" style="border:none;min-height:420px">
+      <div class="msg-list-panel">
+        <div class="msg-search"><input placeholder="Search conversations…"></div>
+        ${[
+          {init:'PS',bg:'#DBEAFE',tc:'#1E40AF',name:'Priya Sharma',prev:'Thank you! Car looks amazing 🚗',time:'2m',unread:false},
+          {init:'AM',bg:'#D1FAE5',tc:'#065F46',name:'Arjun Mehta',prev:'Is my car ready yet?',time:'15m',unread:true},
+          {init:'NP',bg:'#FEF3C7',tc:'#92400E',name:'Nisha Patel',prev:'Please confirm pickup at 3pm',time:'1h',unread:true},
+          {init:'RG',bg:'#E0E7FF',tc:'#3730A3',name:'Rohit Gupta',prev:'Can I reschedule to tomorrow?',time:'2h',unread:false},
+        ].map((m,i)=>`<div class="msg-item${i===0?' active':''}">
+          <div class="msg-av" style="background:${m.bg};color:${m.tc}">${m.init}</div>
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between"><div class="msg-name">${m.name}</div><div class="msg-time">${m.time}</div></div>
+            <div class="msg-prev">${m.prev}</div>
+          </div>
+          ${m.unread?'<div class="msg-unread"></div>':''}
+        </div>`).join('')}
+      </div>
+      <div class="chat-panel">
+        <div class="chat-header">
+          <div class="msg-av" style="background:#DBEAFE;color:#1E40AF;width:36px;height:36px">PS</div>
+          <div><div style="font-weight:600;font-size:13px">Priya Sharma</div><div style="font-size:11px;color:var(--txt3)">Customer · Honda City</div></div>
+          <div style="margin-left:auto;display:flex;gap:6px">
+            <button class="btn btn-ghost" style="padding:5px 8px"><i class="ti ti-phone" style="font-size:15px"></i></button>
+            <button class="btn btn-ghost" style="padding:5px 8px"><i class="ti ti-dots-vertical" style="font-size:15px"></i></button>
+          </div>
+        </div>
+        <div class="chat-messages">
+          <div class="chat-bubble chat-in">Hi, is my Creta ready?<div class="chat-time">10:45 AM</div></div>
+          <div class="chat-bubble chat-out">Yes Priya, your car is done! Please come anytime.<div class="chat-time">10:47 AM</div></div>
+          <div class="chat-bubble chat-in">Thank you! Car looks amazing 🚗<div class="chat-time">10:52 AM</div></div>
+          <div class="chat-bubble chat-out">We're glad you loved it! Don't forget to rate us ⭐<div class="chat-time">10:54 AM</div></div>
+        </div>
+        <div class="chat-input-row">
+          <input placeholder="Type a message…">
+          <button class="btn btn-primary"><i class="ti ti-send"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="card-title">Send campaign</div>
+      <div class="form-group"><label class="form-label">Channel</label>
+        <div style="display:flex;gap:7px">
+          ${[{i:'ti-mail',l:'Email'},{i:'ti-message',l:'SMS'},{i:'ti-bell',l:'Push'},{i:'ti-brand-whatsapp',l:'WhatsApp'}].map((c,i)=>`<div class="pay-method ${i===0?'active':''}" style="min-width:60px"><i class="ti ${c.i}"></i>${c.l}</div>`).join('')}
+        </div>
+      </div>
+      <div class="form-group"><label class="form-label">Audience</label>
+        <select class="form-select"><option>All customers (312)</option><option>No booking this month (124)</option><option>Premium customers (89)</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Subject</label>
+        <input class="form-input" value="Get 20% off this weekend — AutoCare Pro">
+      </div>
+      <div class="form-group" style="margin-bottom:0"><label class="form-label">Message</label>
+        <textarea class="form-textarea" rows="3">Hi {name}, book any service this weekend and get 20% off! Use code WEEKEND20. Valid till 18 May 2026.</textarea>
+      </div>
+      <button class="btn btn-accent" style="width:100%;justify-content:center;margin-top:12px"><i class="ti ti-send"></i>Send to 312 customers</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Sent campaigns</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        ${[['Diwali special — 30% off','Email','312 sent','94% open rate'],['Weekend offer','SMS','189 sent','82% delivered'],['Re-engagement blast','Push','124 sent','41% opened']].map(c=>`<div style="background:var(--bg);border-radius:8px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between">
+          <div><div style="font-size:12px;font-weight:500">${c[0]}</div><div style="font-size:10px;color:var(--txt3)">${c[1]} · ${c[2]}</div></div>
+          <span class="badge bg-green">${c[3]}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>
+</div>
+</div>`,
+
+/* ── BILLING ── */
+'billing': () => `<div class="page active">
+<div class="ph">
+  <div><div class="ph-title">Billing & Payments</div><div class="ph-sub">Online invoicing, payment gateway, and QR scanner</div></div>
+  <div class="ph-right">
+    <button class="btn btn-ghost"><i class="ti ti-download"></i>Export CSV</button>
+    <button class="btn btn-accent"><i class="ti ti-receipt"></i>Create invoice</button>
+  </div>
+</div>
+<div class="two-col">
+  <div>
+    <div class="pay-summary" style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:10px;color:var(--txt)">Invoice #INV-1044</div>
+      <div class="pay-row"><span>Premium Wash</span><span class="td-mono">₹799</span></div>
+      <div class="pay-row"><span>Pick & Drop</span><span class="td-mono">₹299</span></div>
+      <div class="pay-row"><span>GST (18%)</span><span class="td-mono">₹197</span></div>
+      <hr class="pay-divider">
+      <div class="pay-total"><span>Total</span><span>₹1,295</span></div>
+    </div>
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-title">Payment method</div>
+      <div class="pay-methods">
+        ${[{i:'ti-credit-card',l:'Card'},{i:'ti-brand-google',l:'Google Pay'},{i:'ti-wallet',l:'UPI'},{i:'ti-cash',l:'Cash'}].map((m,i)=>`<div class="pay-method ${i===2?'active':''}" style="min-width:70px"><i class="ti ${m.i}"></i>${m.l}</div>`).join('')}
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label">UPI ID</label>
+        <input class="form-input" value="autocaepro@razorpay">
+      </div>
+      <button class="btn btn-teal" style="width:100%;justify-content:center;margin-top:12px"><i class="ti ti-lock"></i>Collect ₹1,295</button>
+    </div>
+  </div>
+  <div class="qr-container">
+    <div style="font-size:12px;font-weight:600;margin-bottom:4px">Company QR Scanner</div>
+    <div style="font-size:11px;color:var(--txt3)">Customer scans to pay instantly</div>
+    <div class="qr-grid">
+      ${Array.from({length:81},(_,i)=>{
+        const r=Math.floor(i/9),c=i%9;
+        const corner=(r<3&&c<3)||(r<3&&c>5)||(r>5&&c<3);
+        const w=[4,10,22,36,44,58,68,76].includes(i);
+        return `<div class="${w?'qr-w':'qr-c'}"></div>`;
+      }).join('')}
+    </div>
+    <div style="font-size:11px;color:var(--txt3);margin-bottom:16px">UPI · AutoCare Pro Chandigarh</div>
+    <div style="border-top:0.5px solid var(--border);padding-top:14px">
+      <div style="font-size:11px;font-weight:600;color:var(--txt);margin-bottom:10px">Recent transactions</div>
+      ${[['Priya Sharma','₹799','UPI','Completed'],['Arjun Mehta','₹1,199','Card','Pending'],['Sandeep Rana','₹299','Cash','Completed']].map(t=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:0.5px solid var(--border)">
+        <div style="font-size:12px;font-weight:500">${t[0]}</div>
+        <div style="display:flex;align-items:center;gap:8px"><span class="td-mono" style="font-size:12px">${t[1]}</span><span class="badge ${t[3]==='Completed'?'bg-green':'bg-amber'}">${t[3]}</span></div>
+      </div>`).join('')}
+    </div>
+  </div>
+</div>
+</div>`,
+
+/* ── SETTINGS ── */
+'settings': () => `<div class="page active">
+<div class="ph"><div><div class="ph-title">Settings</div><div class="ph-sub">Configure your business, payments, notifications, and access</div></div></div>
+<div class="settings-layout">
+  <div class="settings-sidebar">
+    ${[['ti-building','Business info'],['ti-credit-card','Payment gateway'],['ti-bell','Notifications'],['ti-users','Roles & access'],['ti-palette','Branding']].map((s,i)=>`<div class="ss-item ${i===0?'active':''}"><i class="ti ${s[0]}"></i>${s[1]}</div>`).join('')}
+  </div>
+  <div>
+    <div class="card">
+      <div class="card-title">Business information</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Business name</label><input class="form-input" value="AutoCare Pro Chandigarh"></div>
+        <div class="form-group"><label class="form-label">Owner name</label><input class="form-input" value="Rajesh Sharma"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" value="+91 98765 43210"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" value="admin@autocaepro.com"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">GST number</label><input class="form-input" value="03ABCDE1234F1Z5"></div>
+        <div class="form-group" style="margin-bottom:0"><label class="form-label">City</label><input class="form-input" value="Chandigarh"></div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:14px"><i class="ti ti-device-floppy"></i>Save changes</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Payment gateway</div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Provider</label><select class="form-select"><option>Razorpay</option><option>PhonePe Business</option><option>Paytm</option><option>Stripe</option></select></div>
+        <div class="form-group"><label class="form-label">API Key</label><input class="form-input" value="rzp_live_••••••••••••••"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Notification settings</div>
+      ${[
+        ['Booking confirmation SMS','Auto-send on every new booking',true],
+        ['Service completion email','Notify customer when job is done',true],
+        ['Payment receipt email','Send invoice after successful payment',true],
+        ['Driver arrival alert','For pick & drop bookings',false],
+        ['Promotional emails','Deals, offers, and campaign blasts',false],
+        ['Low stock alerts','When consumables run low',true],
+      ].map(n=>`<div class="toggle-row">
+        <div><div class="toggle-info">${n[0]}</div><div class="toggle-sub">${n[1]}</div></div>
+        <div class="toggle-switch ${n[2]?'on':''}" onclick="this.classList.toggle('on')"></div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">Roles & permissions</div>
+      <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>Role</th><th>Bookings</th><th>Team</th><th>Billing</th><th>Messages</th><th>Settings</th></tr></thead>
+        <tbody>
+          <tr><td class="td-name">Owner / Admin</td><td><span class="badge bg-green">Full</span></td><td><span class="badge bg-green">Full</span></td><td><span class="badge bg-green">Full</span></td><td><span class="badge bg-green">Full</span></td><td><span class="badge bg-green">Full</span></td></tr>
+          <tr><td class="td-name">Manager</td><td><span class="badge bg-green">Full</span></td><td><span class="badge bg-blue">View</span></td><td><span class="badge bg-blue">View</span></td><td><span class="badge bg-green">Full</span></td><td><span class="badge bg-gray">None</span></td></tr>
+          <tr><td class="td-name">Employee</td><td><span class="badge bg-teal">Assigned</span></td><td><span class="badge bg-gray">None</span></td><td><span class="badge bg-gray">None</span></td><td><span class="badge bg-teal">Assigned</span></td><td><span class="badge bg-gray">None</span></td></tr>
+          <tr><td class="td-name">Driver</td><td><span class="badge bg-teal">Assigned</span></td><td><span class="badge bg-gray">None</span></td><td><span class="badge bg-gray">None</span></td><td><span class="badge bg-gray">None</span></td><td><span class="badge bg-gray">None</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>`,
+
+/* ── CUSTOMER HOME ── */
+'cust-home': () => `<div class="page active">
+<div class="hero">
+  <div class="hero-tag">✦ AUTOCARE PRO</div>
+  <div class="hero-title">Premium car care,<br>at your doorstep.</div>
+  <div class="hero-sub">Book a wash, full detailing, pick & drop, or decoration in minutes. Professional service guaranteed.</div>
+  <div class="hero-actions">
+    <button class="btn btn-accent" onclick="navigateTo('cust-book')"><i class="ti ti-calendar-plus"></i>Book a service</button>
+    <button class="btn" style="background:rgba(255,255,255,.12);color:#fff"><i class="ti ti-package"></i>View packages</button>
+  </div>
+  <div class="hero-stats">
+    <div class="hs-item"><div class="hs-val">4.8★</div><div class="hs-lbl">Rating</div></div>
+    <div class="hs-item"><div class="hs-val">5,000+</div><div class="hs-lbl">Customers</div></div>
+    <div class="hs-item"><div class="hs-val">24h</div><div class="hs-lbl">Response</div></div>
+    <div class="hs-item"><div class="hs-val">₹299</div><div class="hs-lbl">Starting from</div></div>
+  </div>
+</div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+  <div style="font-size:14px;font-weight:600;color:var(--txt)">Our services</div>
+  <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px">See all packages</button>
+</div>
+<div class="service-grid-cust">
+  ${[
+    {ic:'ti-droplets',col:'#EFF6FF',icol:'#2563EB',name:'Car Washing',price:'From ₹299',cta:'Book now'},
+    {ic:'ti-sparkles',col:'#F0FDF4',icol:'#059669',name:'Detailing',price:'From ₹1,499',cta:'Book now'},
+    {ic:'ti-car',col:'#FFFBEB',icol:'#D97706',name:'Pick & Drop',price:'₹299 flat',cta:'Schedule'},
+    {ic:'ti-gift',col:'#FFF1F2',icol:'#E11D48',name:'Decoration',price:'From ₹2,999',cta:'Book now'},
+  ].map(s=>`<div class="svc-card" onclick="navigateTo('cust-book')">
+    <div class="svc-icon" style="background:${s.col}"><i class="ti ${s.ic}" style="color:${s.icol}"></i></div>
+    <div class="svc-name">${s.name}</div>
+    <div class="svc-price">${s.price}</div>
+    <div class="svc-cta">${s.cta} →</div>
+  </div>`).join('')}
+</div>
+<div class="card">
+  <div class="card-title">Active booking
+    <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px" onclick="navigateTo('cust-track')">All bookings</button>
+  </div>
+  <div style="background:linear-gradient(135deg,var(--brand),#2563EB);border-radius:var(--radius-lg);padding:16px;color:#fff">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:10px;opacity:.6;margin-bottom:4px">BOOKING #1042</div>
+        <div style="font-size:15px;font-weight:600">Premium Wash — Hyundai Creta</div>
+        <div style="display:flex;gap:14px;margin-top:10px">
+          <div style="font-size:11px;opacity:.7;display:flex;align-items:center;gap:5px"><i class="ti ti-clock" style="font-size:13px"></i>Today at 11:00 AM</div>
+          <div style="font-size:11px;opacity:.7;display:flex;align-items:center;gap:5px"><i class="ti ti-user-check" style="font-size:13px"></i>Ravi Kumar</div>
+        </div>
+      </div>
+      <span class="badge bg-green" style="background:rgba(255,255,255,.15);color:#fff;border:0.5px solid rgba(255,255,255,.3)">In progress</span>
+    </div>
+    <div style="margin-top:14px">
+      <div style="display:flex;justify-content:space-between;font-size:10px;opacity:.6;margin-bottom:5px"><span>Progress</span><span>60%</span></div>
+      <div style="background:rgba(255,255,255,.2);height:5px;border-radius:3px"><div style="width:60%;height:5px;background:var(--accent);border-radius:3px"></div></div>
+    </div>
+  </div>
+</div>
+</div>`,
+
+/* ── CUSTOMER BOOK ── */
+'cust-book': () => `<div class="page active">
+<div class="ph"><div><div class="ph-title">Book a service</div><div class="ph-sub">Premium car care at your doorstep or our centre</div></div></div>
+<div class="step-nav">
+  <div class="step active">1. Service</div>
+  <div class="step">2. Schedule</div>
+  <div class="step">3. Your details</div>
+  <div class="step">4. Payment</div>
+</div>
+<div class="two-col">
+  <div>
+    <div class="card">
+      <div class="card-title">Choose a package</div>
+      ${[
+        {name:'Basic Wash',price:'₹299',desc:'Exterior rinse, wheels & windows'},
+        {name:'Premium Wash',price:'₹799',desc:'Exterior + interior vacuum + tyre shine'},
+        {name:'Gold Detailing',price:'₹3,499',desc:'Full detail, polish, leather care, engine bay'},
+        {name:'Ceramic Coating',price:'₹8,999',desc:'5-year protection coat'},
+      ].map((s,i)=>`<div class="service-option ${i===1?'sel':''}" onclick="document.querySelectorAll('.service-option').forEach(e=>e.classList.remove('sel'));this.classList.add('sel');this.querySelector('.so-radio').style.background=''">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="so-radio ${i===1?'active':''}"></div>
+          <div><div style="font-size:12.5px;font-weight:600">${s.name}</div><div style="font-size:11px;color:var(--txt3);margin-top:2px">${s.desc}</div></div>
+        </div>
+        <div style="font-size:14px;font-weight:700;font-family:var(--mono);color:var(--brand)">${s.price}</div>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">Add-ons</div>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">
+        ${['Pick & Drop +₹299','Interior fragrance +₹199','Tyre shine +₹99','Engine bay +₹499'].map((a,i)=>`<div style="border:0.5px solid ${i===0?'var(--brand)':'var(--border2)'};background:${i===0?'var(--bg)':'var(--surface)'};border-radius:20px;padding:5px 12px;font-size:11px;font-weight:500;color:${i===0?'var(--brand)':'var(--txt2)'};cursor:pointer">${i===0?'✓ ':''} ${a}</div>`).join('')}
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="card-title">Pick a date</div>
+      <div style="display:flex;gap:7px;margin-bottom:14px;overflow-x:auto">
+        ${['Mon 18','Tue 19','Wed 20','Thu 21','Fri 22','Sat 23'].map((d,i)=>`<div style="min-width:52px;height:64px;border-radius:10px;border:${i===1?'1.5px solid var(--brand)':'0.5px solid var(--border)'};background:${i===1?'var(--brand)':'var(--surface)'};display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer">
+          <div style="font-size:9px;color:${i===1?'rgba(255,255,255,.6)':'var(--txt3)'}">${d.split(' ')[0]}</div>
+          <div style="font-size:17px;font-weight:700;font-family:var(--mono);color:${i===1?'#fff':'var(--txt)'}">${d.split(' ')[1]}</div>
+        </div>`).join('')}
+      </div>
+      <div class="form-label">Time slot</div>
+      <div class="time-slot-grid">
+        ${['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'].map((t,i)=>`<div class="tslot ${i===2?'sel':''} ${i===3?'unavail':''}" onclick="if(!this.classList.contains('unavail')){document.querySelectorAll('.tslot').forEach(e=>e.classList.remove('sel'));this.classList.add('sel')}">${t}${i===3?' (full)':''}</div>`).join('')}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Vehicle details</div>
+      <div class="form-row" style="margin-bottom:0">
+        <div class="form-group"><label class="form-label">Vehicle type</label><select class="form-select"><option>Sedan</option><option>SUV</option><option>Hatchback</option><option>Luxury</option></select></div>
+        <div class="form-group"><label class="form-label">Vehicle number</label><input class="form-input" placeholder="PB 10 AB 1234"></div>
+      </div>
+    </div>
+    <div style="background:var(--bg);border:0.5px solid var(--border);border-radius:var(--radius-lg);padding:14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:8px">Order summary</div>
+      <div class="pay-row"><span>Premium Wash</span><span class="td-mono">₹799</span></div>
+      <div class="pay-row"><span>Pick & Drop</span><span class="td-mono">₹299</span></div>
+      <div class="pay-row"><span>GST (18%)</span><span class="td-mono">₹197</span></div>
+      <hr class="pay-divider">
+      <div class="pay-total"><span>Total</span><span>₹1,295</span></div>
+    </div>
+    <button class="btn btn-accent" style="width:100%;justify-content:center;padding:11px;font-size:13px">Continue to schedule <i class="ti ti-arrow-right"></i></button>
+  </div>
+</div>
+</div>`,
+
+/* ── CUSTOMER TRACK ── */
+'cust-track': () => `<div class="page active">
+<div class="ph"><div><div class="ph-title">My Bookings</div><div class="ph-sub">Track and manage all your service history</div></div>
+<button class="btn btn-accent" onclick="navigateTo('cust-book')"><i class="ti ti-plus"></i>Book again</button>
+</div>
+<div style="display:flex;gap:7px;margin-bottom:14px">
+  ${['All','Active','Completed','Cancelled'].map((t,i)=>`<button class="btn ${i===0?'btn-primary':'btn-ghost'}" style="font-size:11px;padding:5px 12px">${t}</button>`).join('')}
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+  ${[
+    {id:'#1042',svc:'Premium Wash',car:'Hyundai Creta HR 26 CD 1234',date:'Today · 11:00 AM',emp:'Ravi Kumar',amount:'₹799',status:'In Progress',sc:'bg-blue'},
+    {id:'#1038',svc:'Gold Detailing',car:'Hyundai Creta HR 26 CD 1234',date:'12 May · 10:00 AM',emp:'Suresh Pal',amount:'₹3,499',status:'Completed',sc:'bg-green'},
+    {id:'#1031',svc:'Basic Wash',car:'Hyundai Creta HR 26 CD 1234',date:'5 May · 9:00 AM',emp:'Pavan Joshi',amount:'₹299',status:'Completed',sc:'bg-green'},
+  ].map(b=>`<div class="card" style="margin-bottom:0">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-size:14px;font-weight:600">${b.svc}</div>
+        <div style="font-size:11px;color:var(--txt3);margin-top:2px">${b.car}</div>
+      </div>
+      <span class="badge ${b.sc}">${b.status}</span>
+    </div>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--txt2);margin-bottom:12px">
+      <span style="display:flex;align-items:center;gap:5px"><i class="ti ti-calendar" style="font-size:13px"></i>${b.date}</span>
+      <span style="display:flex;align-items:center;gap:5px"><i class="ti ti-user-check" style="font-size:13px"></i>${b.emp}</span>
+      <span style="display:flex;align-items:center;gap:5px;font-family:var(--mono)"><i class="ti ti-currency-rupee" style="font-size:13px"></i>${b.amount}</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px"><i class="ti ti-eye"></i>Details</button>
+      <button class="btn btn-ghost" style="font-size:11px;padding:5px 10px"><i class="ti ti-receipt"></i>Invoice</button>
+      ${b.status==='Completed'?'<button class="btn btn-ghost" style="font-size:11px;padding:5px 10px"><i class="ti ti-star"></i>Rate</button>':''}
+      ${b.status==='In Progress'?'<button class="btn btn-teal" style="font-size:11px;padding:5px 10px"><i class="ti ti-map-pin"></i>Track</button>':''}
+    </div>
+  </div>`).join('')}
+</div>
+</div>`,
+
+/* ── CUSTOMER BILLING ── */
+'cust-billing': () => `<div class="page active">
+<div class="ph"><div><div class="ph-title">Payments</div><div class="ph-sub">Your billing history and saved payment methods</div></div></div>
+<div class="two-col">
+  <div>
+    <div class="stat-grid" style="grid-template-columns:1fr 1fr;margin-bottom:14px">
+      <div class="stat-card s-blue"><div class="stat-icon" style="background:#EFF6FF"><i class="ti ti-receipt" style="font-size:18px;color:#2563EB"></i></div><div class="stat-val">₹4,597</div><div class="stat-lbl">Total spent</div></div>
+      <div class="stat-card s-teal"><div class="stat-icon" style="background:#CCFBF1"><i class="ti ti-calendar" style="font-size:18px;color:#0EA5A0"></i></div><div class="stat-val">8</div><div class="stat-lbl">Bookings total</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Payment history</div>
+      ${[
+        ['#1042','Premium Wash','17 May 2026','₹799','UPI','Paid'],
+        ['#1038','Gold Detailing','12 May 2026','₹3,499','Card','Paid'],
+        ['#1031','Basic Wash','5 May 2026','₹299','Cash','Paid'],
+      ].map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:0.5px solid var(--border)">
+        <div><div style="font-size:12.5px;font-weight:500">${p[1]}</div><div style="font-size:10px;color:var(--txt3);margin-top:1px">${p[2]} · ${p[3] in {UPI:1,Card:1,Cash:1}?'via '+p[3]:p[3]} · ${p[0]}</div></div>
+        <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--mono);font-weight:600;font-size:13px">${p[3]}</span><button class="btn btn-ghost" style="font-size:10px;padding:3px 7px"><i class="ti ti-download" style="font-size:12px"></i></button></div>
+      </div>`).join('')}
+    </div>
+  </div>
+  <div class="qr-container" style="align-self:start">
+    <div style="font-size:13px;font-weight:600;margin-bottom:4px">Pay via QR</div>
+    <div style="font-size:11px;color:var(--txt3)">Scan at counter or online</div>
+    <div class="qr-grid">
+      ${Array.from({length:81},(_,i)=>{
+        const w=[5,12,20,28,36,50,60,72].includes(i%9)&&i<27;
+        return `<div class="${w?'qr-w':'qr-c'}"></div>`;
+      }).join('')}
+    </div>
+    <div style="font-size:11px;color:var(--txt3)">AutoCare Pro · Chandigarh</div>
+    <div style="margin-top:16px;border-top:0.5px solid var(--border);padding-top:14px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:8px">Saved payment methods</div>
+      ${[{i:'ti-credit-card',l:'Axis Bank Visa ••4521',d:'Expires 03/28'},
+         {i:'ti-brand-google',l:'Google Pay',d:'9876543210@okaxis'}].map(m=>`<div style="display:flex;align-items:center;gap:10px;padding:9px;background:var(--bg);border-radius:9px;margin-bottom:7px">
+        <i class="ti ${m.i}" style="font-size:20px;color:var(--brand)"></i>
+        <div><div style="font-size:12px;font-weight:500">${m.l}</div><div style="font-size:10px;color:var(--txt3)">${m.d}</div></div>
+        <button class="btn btn-ghost" style="margin-left:auto;padding:4px 8px;font-size:11px">Remove</button>
+      </div>`).join('')}
+      <button class="btn btn-ghost" style="width:100%;justify-content:center;font-size:12px"><i class="ti ti-plus"></i>Add payment method</button>
+    </div>
+  </div>
+</div>
+</div>`,
+
+/* ── CUSTOMER PROFILE ── */
+'cust-profile': () => `<div class="page active">
+<div class="ph"><div><div class="ph-title">My Profile</div><div class="ph-sub">Manage your account, vehicles, and preferences</div></div>
+<button class="btn btn-ghost"><i class="ti ti-logout"></i>Log out</button>
+</div>
+<div class="two-col">
+  <div>
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--brand);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:#fff;font-family:var(--mono)">PS</div>
+        <div><div style="font-size:16px;font-weight:600">Priya Sharma</div><div style="font-size:12px;color:var(--txt3)">Customer since Jan 2025</div></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Full name</label><input class="form-input" value="Priya Sharma"></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" value="+91 9876543210"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:0"><label class="form-label">Email</label><input class="form-input" value="priya.sharma@gmail.com"></div>
+      <button class="btn btn-primary" style="margin-top:14px"><i class="ti ti-device-floppy"></i>Save profile</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Notification preferences</div>
+      ${[
+        ['Booking confirmation SMS',true],
+        ['Service completion alerts',true],
+        ['Promotional offers',false],
+        ['Rating reminders',true],
+      ].map(n=>`<div class="toggle-row"><div class="toggle-info">${n[0]}</div><div class="toggle-switch ${n[1]?'on':''}" onclick="this.classList.toggle('on')"></div></div>`).join('')}
+    </div>
+  </div>
+  <div>
+    <div class="card">
+      <div class="card-title">My vehicles <button class="btn btn-ghost" style="font-size:11px;padding:4px 9px"><i class="ti ti-plus"></i>Add</button></div>
+      ${[{n:'Hyundai Creta',p:'HR 26 CD 1234',t:'SUV',c:'Silver'},{n:'Honda Activa','p':'HR 26 EF 5678',t:'Two-wheeler',c:'Blue'}].map((v,i)=>`<div style="background:var(--bg);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px">
+        <div style="width:38px;height:38px;border-radius:10px;background:var(--brand);display:flex;align-items:center;justify-content:center"><i class="ti ti-car" style="font-size:18px;color:#fff"></i></div>
+        <div style="flex:1"><div style="font-size:12.5px;font-weight:600">${v.n}</div><div style="font-size:11px;color:var(--txt3)">${v.p} · ${v.t} · ${v.c}</div></div>
+        <button class="btn btn-ghost" style="padding:4px 8px;font-size:11px"><i class="ti ti-edit" style="font-size:13px"></i></button>
+      </div>`).join('')}
+    </div>
+    <div class="card">
+      <div class="card-title">Loyalty & rewards</div>
+      <div style="background:linear-gradient(135deg,var(--brand),var(--teal));border-radius:12px;padding:16px;color:#fff;margin-bottom:12px">
+        <div style="font-size:10px;opacity:.6;margin-bottom:4px">AUTOCARE GOLD MEMBER</div>
+        <div style="font-size:24px;font-weight:700;font-family:var(--mono)">840 pts</div>
+        <div style="font-size:11px;opacity:.7;margin-top:4px">160 pts to next reward</div>
+        <div style="margin-top:10px;background:rgba(255,255,255,.2);height:5px;border-radius:3px"><div style="width:84%;height:5px;background:var(--accent);border-radius:3px"></div></div>
+      </div>
+      <div style="font-size:11px;color:var(--txt2)">Every ₹100 spent = 10 points. 1000 points = ₹100 off your next booking.</div>
+    </div>
+  </div>
+</div>
+</div>`,
+
+};
+
+/* Init */
+buildSidebar();
+renderPage('dash');
+</script>
+</body>
+</html>
