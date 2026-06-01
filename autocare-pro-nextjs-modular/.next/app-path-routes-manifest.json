@@ -1,0 +1,20 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/customer/billing/page": "/customer/billing",
+  "/admin/dashboard/page": "/admin/dashboard",
+  "/bookings/page": "/bookings",
+  "/customer/book/page": "/customer/book",
+  "/billing/page": "/billing",
+  "/customer/bookings/page": "/customer/bookings",
+  "/dashboard/page": "/dashboard",
+  "/customer/page": "/customer",
+  "/customer/profile/page": "/customer/profile",
+  "/register/page": "/register",
+  "/employees/page": "/employees",
+  "/page": "/",
+  "/packages/page": "/packages",
+  "/messages/page": "/messages",
+  "/login/page": "/login",
+  "/settings/page": "/settings",
+  "/employee/dashboard/page": "/employee/dashboard"
+}

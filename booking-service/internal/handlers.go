@@ -34,6 +34,21 @@ func (h *BookingHandler) GetBooking(c *fiber.Ctx) error {
 	return c.JSON(booking)
 }
 
+// GetCustomerBookings returns all bookings for a given customer ID.
+func (h *BookingHandler) GetCustomerBookings(c *fiber.Ctx) error {
+	customerID := c.Params("customer_id")
+	if customerID == "" {
+		return c.Status(400).JSON(fiber.Map{"error": "customer_id is required"})
+	}
+
+	bookings, err := h.service.GetBookingsByCustomer(c.Context(), customerID)
+	if err != nil {
+		return c.Status(404).JSON(fiber.Map{"error": "bookings not found"})
+	}
+
+	return c.JSON(bookings)
+}
+
 func (h *BookingHandler) UpdateBooking(c *fiber.Ctx) error {
 	var req UpdateBookingRequest
 

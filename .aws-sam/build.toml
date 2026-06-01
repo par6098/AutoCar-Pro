@@ -45,4 +45,22 @@ manifest_hash = ""
 packagetype = "Zip"
 functions = ["EmployeeFunction"]
 
+[function_build_definitions.f9c5c074-3653-457b-a965-0b6cbdb171b1]
+codeuri = "C:\\Parvinder\\AutoCar-Pro\\analytics-service"
+runtime = "provided.al2023"
+architecture = "x86_64"
+handler = "bootstrap"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["AnalyticsFunction"]
+
+[function_build_definitions.2b65abaf-6fdd-49e7-891b-2c8523ed18ad]
+codeuri = "C:\\Parvinder\\AutoCar-Pro\\payment-service"
+runtime = "nodejs22.x"
+architecture = "x86_64"
+handler = "src/handler.handler"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["PaymentFunction"]
+
 [layer_build_definitions]

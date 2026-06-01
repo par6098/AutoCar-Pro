@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	fiberadapter "github.com/awslabs/aws-lambda-go-api-proxy/fiber"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
 var fiberLambda *fiberadapter.FiberLambda
@@ -23,12 +24,18 @@ func init() {
 	handler := internal.NewBookingHandler(service)
 
 	app := fiber.New()
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization",
+	}))
 
 	api := app.Group(
 		"/bookings",
 	)
 
 	api.Post("/", handler.CreateBooking)
+	api.Get("/customer/:customerId", handler.GetCustomerBookings)
 	api.Get("/:id", handler.GetBooking)
 	api.Put("/:id", handler.UpdateBooking)
 	api.Post("/:id/cancel", handler.CancelBooking)

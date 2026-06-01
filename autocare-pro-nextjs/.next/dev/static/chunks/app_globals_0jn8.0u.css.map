@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///C:/Parvinder/AutoCar-Pro/autocare-pro-nextjs/app/globals.css"],"sourcesContent":["html,\nbody {\n  margin: 0;\n  min-height: 100%;\n  background: #f4f3ef;\n}\n\n* {\n  box-sizing: border-box;\n}\n"],"names":[],"mappings":"AAAA;;;;;;AAOA"}}]
-}

@@ -1,0 +1,21 @@
+{
+  "name": "notification-service",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/handler.js",
+  "scripts": {
+    "dev": "set LOCAL_RUN=true&& node src/app.js",
+    "start": "node src/app.js"
+  },
+  "dependencies": {
+    "@fastify/aws-lambda": "^6.4.0",
+    "dotenv": "^17.4.2",
+    "fastify": "^5.8.5",
+    "firebase-admin": "^13.10.0",
+    "ioredis": "^5.10.1",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.21.0",
+    "resend": "^6.12.3",
+    "twilio": "^6.0.2"
+  }
+}

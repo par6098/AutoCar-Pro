@@ -143,3 +143,67 @@ Resources:
           Properties:
             Path: /analytics/{proxy+}
             Method: ANY
+  PaymentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: payment-service/
+      Handler: src/handler.handler
+      Runtime: nodejs22.x
+      Timeout: 60
+      Environment:
+        Variables:
+          DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/paymentdb?sslmode=disable
+          JWT_SECRET: autocare_secret_key
+          GST_PERCENT: "18"
+          RAZORPAY_KEY_ID: rzp_test_SqpLuBwYLpl1XP
+          RAZORPAY_KEY_SECRET: jQzg19YR10SnYZ4vLAgekThb
+          STRIPE_SECRET_KEY: ""
+          STRIPE_WEBHOOK_SECRET: ""
+          PHONEPE_MERCHANT_ID: ""
+          PHONEPE_SALT_KEY: ""
+          PHONEPE_SALT_INDEX: "1"
+      Events:
+        PaymentRootApi:
+          Type: Api
+          Properties:
+            Path: /payments
+            Method: ANY
+        PaymentProxyApi:
+          Type: Api
+          Properties:
+            Path: /payments/{proxy+}
+            Method: ANY
+  NotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: notification-service/
+      Handler: src/handler.handler
+      Runtime: nodejs22.x
+      Timeout: 60
+      MemorySize: 512
+      Environment:
+        Variables:
+          DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/notificationdb?sslmode=disable
+          JWT_SECRET: autocare_secret_key
+          REDIS_ADDR: host.docker.internal
+          REDIS_PORT: "6379"
+          BOOKING_EVENT_QUEUE: booking-events
+          NOTIFICATION_EVENT_QUEUE: notification-events
+          TWILIO_ACCOUNT_SID: AC9911750eb3e63d2f61c94293ad848f1b
+          TWILIO_AUTH_TOKEN: 836608c4620cf4c2cc2c285523d6a934
+          TWILIO_FROM_NUMBER: "+14155238886"
+          MSG91_AUTH_KEY: ""
+          MSG91_SENDER_ID: ""
+          RESEND_API_KEY: ""
+          EMAIL_FROM: no-reply@autocare.local
+      Events:
+        NotificationRootApi:
+          Type: Api
+          Properties:
+            Path: /notifications
+            Method: ANY
+        NotificationProxyApi:
+          Type: Api
+          Properties:
+            Path: /notifications/{proxy+}
+            Method: ANY

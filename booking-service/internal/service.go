@@ -9,12 +9,17 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
+	"github.com/valyala/fasthttp"
 )
 
 type BookingService struct {
 	db    *pgxpool.Pool
 	redis *redis.Client
 	cfg   Config
+}
+
+func (s *BookingService) GetBookingsByCustomer(ctx *fasthttp.RequestCtx, customerID string) (any, any) {
+	panic("unimplemented")
 }
 
 func NewBookingService(db *pgxpool.Pool, redisClient *redis.Client, cfg Config) *BookingService {

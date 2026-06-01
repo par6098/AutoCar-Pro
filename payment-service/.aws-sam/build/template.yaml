@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  PaymentFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: PaymentFunction
+      Handler: src/handler.handler
+      Runtime: nodejs22.x
+      Timeout: 60
+      MemorySize: 512
+      Environment:
+        Variables:
+          DATABASE_URL: postgres://postgres:postgres@host.docker.internal:5432/paymentdb?sslmode=disable
+          JWT_SECRET: autocare_secret_key
+          GST_PERCENT: '18'
+          RAZORPAY_KEY_ID: rzp_test_SqpLuBwYLpl1XP
+          RAZORPAY_KEY_SECRET: jQzg19YR10SnYZ4vLAgekThb
+          STRIPE_SECRET_KEY: ''
+          STRIPE_WEBHOOK_SECRET: ''
+          PHONEPE_MERCHANT_ID: ''
+          PHONEPE_SALT_KEY: ''
+          PHONEPE_SALT_INDEX: '1'
+      Events:
+        PaymentRootApi:
+          Type: Api
+          Properties:
+            Path: /payments
+            Method: ANY
+        PaymentProxyApi:
+          Type: Api
+          Properties:
+            Path: /payments/{proxy+}
+            Method: ANY
+    Metadata:
+      SamResourceId: PaymentFunction
